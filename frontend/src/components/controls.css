@@ -1,0 +1,144 @@
+/* Container for all controls */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  background-color: #252526;
+  border-bottom: 1px solid #333;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Grouping language and theme selectors */
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+}
+
+/* Label + Icon wrapper */
+.icon-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #d4d4d4;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* General icon style */
+.icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  transition: filter 0.2s ease;
+  filter: brightness(0.85);
+}
+
+/* Button to run code */
+.run-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  background-color: #0e639c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  min-width: 120px;
+  height: 38px;
+}
+
+.run-button:hover {
+  background-color: #1177bb;
+}
+
+.run-button:disabled {
+  background-color: #3e3e42;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.run-button .icon {
+  width: 14px;
+  height: 14px;
+  filter: brightness(1);
+}
+
+/* Custom styled select */
+select {
+  background-color: #3e3e42;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  min-width: 130px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+select:hover {
+  background-color: #4e4e52;
+}
+.theme-select{
+  margin-left: 10px;
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #007acc;
+}
+
+/* Custom arrow on the dropdown */
+.control-group::after {
+  content: "▼";
+  font-size: 0.65rem;
+  color: #d4d4d4;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Make sure the icon and select align horizontally */
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  position: relative;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2.5rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .control-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  select {
+    width: 100%;
+  }
+
+  .run-button {
+    width: 100%;
+    margin-left: 0;
+  }
+}
