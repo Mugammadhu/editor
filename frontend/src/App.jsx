@@ -85,7 +85,7 @@ const App = () => {
       />
       
       <PanelGroup direction="horizontal" className="editor-container">
-        <Panel defaultSize={50} className="editor-panel">
+        <Panel defaultSize={50} className="editor-panel" minSize={30}>
           <CodeEditor
             language={language}
             theme={theme}
@@ -98,7 +98,7 @@ const App = () => {
           <div className="resize-icon">↔</div>
         </PanelResizeHandle>
         
-        <Panel defaultSize={50} className="output-panel">
+        <Panel defaultSize={50} className="output-panel" minSize={30}>
           <Output 
             output={output} 
             onClear={() => setOutput('')} 
