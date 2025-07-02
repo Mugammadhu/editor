@@ -47,32 +47,27 @@ const layoutOptions = [
 ];
 
 
-const Controls = ({ onLanguageChange, onThemeChange, onRun, onSaveCode, isRunning, onDownloadCode, layout, onLayoutChange }) => {
-  const [language, setLanguage] = useState('python');
-  const [theme, setTheme] = useState('vs');
-const [layouts,setLayouts]=useState('vertical');
+const Controls = ({ language,theme,onLanguageChange, onThemeChange, onRun, onSaveCode, isRunning, onDownloadCode, layout, onLayoutChange }) => {
+
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
-    setLanguage(newLang);
     onLanguageChange(newLang);
   };
 
   const handleThemeChange = (e) => {
     const newTheme = e.target.value;
-    setTheme(newTheme);
     onThemeChange(newTheme);
   };
 
     const handleLayoutChange = (e) => {
     const newLayout = e.target.value;
-    setLayouts(newLayout);
     onLayoutChange(newLayout);
   };
 
   const currentLangIcon = languageOptions.find(lang => lang.value === language)?.icon;
   const currentThemeIcon = themeOptions.find(th => th.value === theme)?.icon;
-  const currentLayoutIcon = layoutOptions.find(lay => lay.value === layouts)?.icon;
+  const currentLayoutIcon = layoutOptions.find(lay => lay.value === layout)?.icon;
 
   return (
     <div className="controls">

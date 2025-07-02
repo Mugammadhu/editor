@@ -59,11 +59,43 @@ const [layout, setLayout] = useState('vertical');
 const splitDirection = layout === 'vertical' ? 'horizontal' : 'vertical';
 
 
-  useEffect(() => {
+
+if (!sessionStorage.getItem('unsavedCleared')) {
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('unsaved-')) {
+      localStorage.removeItem(key);
+    }
+  });
+  sessionStorage.setItem('unsavedCleared', 'true');
+}
+useEffect(() => {
     const savedCode = localStorage.getItem(`code-${language}`);
-    setCode(savedCode || BOILERPLATES[language]);
-    setOutput('');
+    const unsavedCode = localStorage.getItem(`unsaved-${language}`);
+    
+    // Priority: unsaved changes > saved code > boilerplate
+    setCode(unsavedCode || savedCode || BOILERPLATES[language]);
   }, [language]);
+
+  // Auto-save unsaved changes (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (code !== BOILERPLATES[language]) {
+        localStorage.setItem(`unsaved-${language}`, code);
+      } else {
+        localStorage.removeItem(`unsaved-${language}`);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [code, language]);
+
+  const handleSaveCode = () => {
+    localStorage.setItem(`code-${language}`, code);
+    localStorage.removeItem(`unsaved-${language}`);
+    setAlertMessage('Code saved!');
+    setAlertVisible(true);
+  };
+
 
   const handleRunCode = async () => {
     if (!code.trim()) {
@@ -129,11 +161,7 @@ const splitDirection = layout === 'vertical' ? 'horizontal' : 'vertical';
   onLanguageChange={setLanguage}
   onThemeChange={setTheme}
   onRun={handleRunCode}
-  onSaveCode={() => {
-    localStorage.setItem(`code-${language}`, code);
-    setAlertMessage('Code saved!');
-    setAlertVisible(true);
-  }}
+onSaveCode={handleSaveCode}
   isRunning={isRunning}
   onDownloadCode={handleDownloadCode}
   layout={layout}
