@@ -23,7 +23,7 @@ const CodeEditor = ({ language, theme, code, onCodeChange, version, onClear, onS
       <div className="editor-header">
         <h3>{language} {version}</h3>
         <div className="editor-actions">
-          <button onClick={onClear} className="clear-btn">🧹 Clear</button>
+          <button onClick={onClear} className="clear-btn">🔄 Reset</button>
           <button onClick={onSave}>💾 Save</button>
         </div>
       </div>

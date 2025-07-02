@@ -42,7 +42,7 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  background-color: #3a8ee6;
+  background-color: #27ae60;
   color: #fff;
   transition: background-color 0.2s ease;
 }
@@ -53,7 +53,7 @@
 }
 
 .clear-btn {
-  background-color: rgb(240, 64, 64) !important;
+  background-color: #e74c3c !important;
 }
 
 .editor-content {

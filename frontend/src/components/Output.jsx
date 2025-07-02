@@ -15,8 +15,8 @@ const Output = ({ output, onClear, theme }) => {
       <div className={`output-header ${theme}`}>
         <h3>Output</h3>
         <div className="output-actions">
-          <button onClick={handleCopy} className="copy-button">{copy}</button>
-          <button onClick={onClear} className="clear-button">Clear</button>
+          <button onClick={handleCopy} className="copy-button">📋 {copy}</button>
+          <button onClick={onClear} className="clear-button">🔄 Reset</button>
         </div>
       </div>
 

@@ -31,7 +31,7 @@
 /* Clear buttons */
 .clear-button {
   padding: 0.3rem 0.8rem;
-  background-color: rgb(240, 64, 64);
+  background-color: #e74c3c;
   color: white;
   border: none;
   border-radius: 4px;
@@ -41,7 +41,7 @@
 
 /* Copy button */
 .copy-button {
-  background: #4caf50;
+  background: #3498db;
   color: white;
   border: none;
   padding: 0.3rem 0.8rem;

@@ -90,11 +90,11 @@ const Controls = ({
       </div>
 
       <button className="run-button" onClick={onRun} disabled={isRunning}>
-        <img src={playIcon} alt="Run" className="icon" /> {isRunning ? 'Running...' : 'Run Code'}
+         {isRunning ? '⏳ Running...' : '▶️ Run Code'}
       </button>
 
       <button className="submit-button" onClick={() => setShowConfirm(true)}>
-        📨 Submit
+        🚀 Submit
       </button>
     </div>
   );
