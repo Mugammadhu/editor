@@ -17,6 +17,8 @@ import typescriptIcon from '../assets/icons/typescript.svg';
 import rubyIcon from '../assets/icons/ruby.svg';
 import swiftIcon from '../assets/icons/swift.svg';
 import phpIcon from '../assets/icons/php.svg';
+import verticalLight from '../assets/resizers/vertical-light.svg';
+import horizontalLight from '../assets/resizers/horizontal-light.svg';
 import './controls.css';
 
 const languageOptions = [
@@ -39,9 +41,16 @@ const themeOptions = [
   { value: 'hc-black', label: 'High Contrast', icon: contrastIcon }
 ];
 
-const Controls = ({ onLanguageChange, onThemeChange, onRun, isRunning }) => {
+const layoutOptions = [
+  { value: 'horizontal', label: 'Horizontal',icon: verticalLight},
+  { value: 'vertical', label: 'Vertical',icon: horizontalLight }
+];
+
+
+const Controls = ({ onLanguageChange, onThemeChange, onRun, onSaveCode, isRunning, onDownloadCode, layout, onLayoutChange }) => {
   const [language, setLanguage] = useState('python');
   const [theme, setTheme] = useState('vs');
+const [layouts,setLayouts]=useState('vertical');
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
@@ -55,19 +64,25 @@ const Controls = ({ onLanguageChange, onThemeChange, onRun, isRunning }) => {
     onThemeChange(newTheme);
   };
 
+    const handleLayoutChange = (e) => {
+    const newLayout = e.target.value;
+    setLayouts(newLayout);
+    onLayoutChange(newLayout);
+  };
+
   const currentLangIcon = languageOptions.find(lang => lang.value === language)?.icon;
   const currentThemeIcon = themeOptions.find(th => th.value === theme)?.icon;
+  const currentLayoutIcon = layoutOptions.find(lay => lay.value === layouts)?.icon;
 
   return (
     <div className="controls">
+
       <div className="control-group language-select">
         <div className="icon-wrapper">
           <img src={currentLangIcon} alt="Lang" className="icon" />
           <select value={language} onChange={handleLanguageChange}>
             {languageOptions.map(({ value, label }) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
+              <option key={value} value={value}>{label}</option>
             ))}
           </select>
         </div>
@@ -78,19 +93,37 @@ const Controls = ({ onLanguageChange, onThemeChange, onRun, isRunning }) => {
           <img src={currentThemeIcon} alt="Theme" className="icon" />
           <select value={theme} onChange={handleThemeChange}>
             {themeOptions.map(({ value, label }) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
+              <option key={value} value={value}>{label}</option>
             ))}
           </select>
+        </div>
+      </div>
+
+      <div className="control-group layout-select">
+        <div className="icon-wrapper">
+          <img src={currentLayoutIcon} alt="Theme" className="icon" />
+        <select value={layout} onChange={handleLayoutChange}>
+          {layoutOptions.map(({ value, label }) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
         </div>
       </div>
 
       <button className="run-button" onClick={onRun} disabled={isRunning}>
         <img src={playIcon} alt="Run" className="icon" /> {isRunning ? 'Running...' : 'Run Code'}
       </button>
+
+      <button className="save-button" onClick={onSaveCode}>
+        💾 Save Code
+      </button>
+
+      <button onClick={onDownloadCode} className='download-button'>
+        Download Code
+      </button>
     </div>
   );
 };
+
 
 export default Controls;

@@ -1,11 +1,23 @@
+
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Header from './components/Header';
 import Controls from './components/Controls';
 import CodeEditor from './components/Editor';
 import Output from './components/Output';
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import CustomAlert from './components/CustomAlert';
 import './App.css';
+
+//svg
+import verticalLight from './assets/resizers/vertical-light.svg';
+import verticalDark from './assets/resizers/vertical-dark.svg';
+
+
+import horizontalLight from './assets/resizers/horizontal-light.svg';
+import horizontalDark from './assets/resizers/horizontal-dark.svg';
+
+
 
 const BOILERPLATES = {
   python: '# Python 3\nprint("Hello, World!")\n',
@@ -41,11 +53,16 @@ const App = () => {
   const [code, setCode] = useState(BOILERPLATES.python);
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+const [layout, setLayout] = useState('vertical');
+const splitDirection = layout === 'vertical' ? 'horizontal' : 'vertical';
 
-  // Load boilerplate when language changes
+
   useEffect(() => {
-    setCode(BOILERPLATES[language]);
-    setOutput(''); // Clear output when language changes
+    const savedCode = localStorage.getItem(`code-${language}`);
+    setCode(savedCode || BOILERPLATES[language]);
+    setOutput('');
   }, [language]);
 
   const handleRunCode = async () => {
@@ -56,14 +73,14 @@ const App = () => {
 
     setIsRunning(true);
     setOutput('Running...');
-    
+
     try {
       const response = await axios.post('https://emkc.org/api/v2/piston/execute', {
         language,
         version: LANGUAGE_VERSIONS[language] || 'latest',
         files: [{ content: code }]
       });
-      
+
       setOutput(response.data.run.output || 'No output');
     } catch (error) {
       setOutput(`Error: ${error.response?.data?.message || error.message}`);
@@ -72,20 +89,60 @@ const App = () => {
     }
   };
 
+  const handleClearOutput = () => {
+    setOutput('');
+  };
+
+  const handleDownloadCode = () => {
+    const extensionMap = {
+      python: 'py',
+      javascript: 'js',
+      java: 'java',
+      c: 'c',
+      cpp: 'cpp',
+      go: 'go',
+      rust: 'rs',
+      typescript: 'ts',
+      ruby: 'rb',
+      swift: 'swift',
+      php: 'php'
+    };
+
+    const extension = extensionMap[language] || 'txt';
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `code.${extension}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="app">
-      <Header />
-      <Controls
-        language={language}
-        theme={theme}
-        onLanguageChange={setLanguage}
-        onThemeChange={setTheme}
-        onRun={handleRunCode}
-        isRunning={isRunning}
-      />
-      
-      <PanelGroup direction="horizontal" className="editor-container">
-        <Panel defaultSize={50} className="editor-panel" minSize={30}>
+   <Controls
+  language={language}
+  theme={theme}
+  onLanguageChange={setLanguage}
+  onThemeChange={setTheme}
+  onRun={handleRunCode}
+  onSaveCode={() => {
+    localStorage.setItem(`code-${language}`, code);
+    setAlertMessage('Code saved!');
+    setAlertVisible(true);
+  }}
+  isRunning={isRunning}
+  onDownloadCode={handleDownloadCode}
+  layout={layout}
+  onLayoutChange={setLayout}
+/>
+
+      <PanelGroup direction={splitDirection} className={`main-container ${splitDirection}`}>
+
+        <Panel defaultSize={60} minSize={30} className="editor-panel">
           <CodeEditor
             language={language}
             theme={theme}
@@ -93,18 +150,34 @@ const App = () => {
             onCodeChange={setCode}
           />
         </Panel>
-        
-        <PanelResizeHandle className="resize-handle">
-          <div className="resize-icon">↔</div>
-        </PanelResizeHandle>
-        
-        <Panel defaultSize={50} className="output-panel" minSize={30}>
-          <Output 
-            output={output} 
-            onClear={() => setOutput('')} 
-          />
+
+<PanelResizeHandle className={`resize-handle ${theme}`}>
+  <img
+    src={
+      layout === 'vertical'
+        ? theme === 'vs' ?  verticalDark : theme === 'vs-dark' ? verticalLight  : verticalDark
+        : theme === 'vs' ?  horizontalDark : theme === 'vs-dark' ? horizontalLight :   horizontalDark
+    }
+    alt="Resize Handle"
+    className="resize-icon"
+  />
+</PanelResizeHandle>
+
+
+        <Panel defaultSize={40} minSize={20} className="output-panel">
+<Output
+  output={output}
+  onClear={handleClearOutput}
+  theme={theme}
+/>
         </Panel>
       </PanelGroup>
+
+      <CustomAlert
+        message={alertMessage}
+        show={alertVisible}
+        onClose={() => setAlertVisible(false)}
+      />
     </div>
   );
 };

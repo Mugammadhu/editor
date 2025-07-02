@@ -1,0 +1,20 @@
+.custom-alert {
+  position: fixed;
+  top: 20px;
+  right: -300px;
+  background-color: #007acc;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: right 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
+  z-index: 9999;
+  font-size: 1rem;
+}
+
+.custom-alert.show {
+  right: 50%;
+  transform: translateX(50%);
+  opacity: 1;
+}
