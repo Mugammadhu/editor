@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Output.css'; // Create this if not already
+import './output.css'; // Create this if not already
 
 const Output = ({ output, onClear, theme }) => {
   const [copy, setCopy] = useState('copy');
@@ -11,8 +11,8 @@ const Output = ({ output, onClear, theme }) => {
   };
 
   return (
-    <div className={`output-container ${theme === 'vs-dark' ? 'dark' : 'light'}`}>
-      <div className="output-header">
+    <div className={`output-container ${theme === 'vs-dark' ? 'dark-output' : theme=='vs' ? 'light-output' : 'contrast-output'}`}>
+      <div className={`output-header ${theme}`}>
         <h3>Output</h3>
         <div className="output-actions">
           <button onClick={handleCopy} className="copy-button">{copy}</button>
@@ -20,7 +20,7 @@ const Output = ({ output, onClear, theme }) => {
         </div>
       </div>
 
-      <pre className="output-content">
+      <pre className={`output-content ${theme === 'vs-dark' ? 'dark' : 'light'}`}>
         {output || 'Output will appear here...'}
       </pre>
     </div>

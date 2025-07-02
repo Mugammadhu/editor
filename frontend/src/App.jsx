@@ -7,6 +7,7 @@ import CodeEditor from './components/Editor';
 import Output from './components/Output';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import CustomAlert from './components/CustomAlert';
+import ConfirmSubmit from './components/ConfirmSubmit';
 import './App.css';
 
 //svg
@@ -20,17 +21,17 @@ import horizontalDark from './assets/resizers/horizontal-dark.svg';
 
 
 const BOILERPLATES = {
-  python: '# Python 3\nprint("Hello, World!")\n',
-  javascript: '// JavaScript\nconsole.log("Hello, World!");\n',
-  java: '// Java\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
-  c: '// C\n#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
-  cpp: '// C++\n#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}\n',
-  go: '// Go\npackage main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}\n',
-  rust: '// Rust\nfn main() {\n    println!("Hello, World!");\n}\n',
-  typescript: '// TypeScript\nconsole.log("Hello, World!");\n',
-  ruby: '# Ruby\nputs "Hello, World!"',
-  swift: '// Swift\nprint("Hello, World!")',
-  php: '<?php\necho "Hello, World!";\n?>'
+  python: 'print("Hello, World!")\n',
+  javascript: 'console.log("Hello, World!");\n',
+  java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
+  c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
+  cpp: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}\n',
+  go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}\n',
+  rust: 'fn main() {\n    println!("Hello, World!");\n}\n',
+  typescript: 'console.log("Hello, World!");\n',
+  ruby: 'puts "Hello, World!"',
+  swift: 'print("Hello, World!")',
+  php: '<?echo "Hello, World!";\n?>'
 };
 
 const LANGUAGE_VERSIONS = {
@@ -48,8 +49,8 @@ const LANGUAGE_VERSIONS = {
 };
 
 const App = () => {
-  const [language, setLanguage] = useState('python');
-  const [theme, setTheme] = useState('vs');
+const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'python');
+const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'vs');
   const [code, setCode] = useState(BOILERPLATES.python);
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
@@ -57,17 +58,18 @@ const App = () => {
   const [alertMessage, setAlertMessage] = useState('');
 const [layout, setLayout] = useState('vertical');
 const splitDirection = layout === 'vertical' ? 'horizontal' : 'vertical';
+const version=LANGUAGE_VERSIONS[language];
+const [showConfirm, setShowConfirm] = useState(false);
 
 
+useEffect(() => {
+  localStorage.setItem('language', language);
+}, [language]);
 
-if (!sessionStorage.getItem('unsavedCleared')) {
-  Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith('unsaved-')) {
-      localStorage.removeItem(key);
-    }
-  });
-  sessionStorage.setItem('unsavedCleared', 'true');
-}
+useEffect(() => {
+  localStorage.setItem('theme', theme);
+}, [theme]);
+
 useEffect(() => {
     const savedCode = localStorage.getItem(`code-${language}`);
     const unsavedCode = localStorage.getItem(`unsaved-${language}`);
@@ -153,6 +155,15 @@ useEffect(() => {
     URL.revokeObjectURL(url);
   };
 
+
+  const handleFinalSubmit = () => {
+  // Your submit logic
+  handleDownloadCode()
+  setAlertMessage('Code submitted successfully!');
+  setAlertVisible(true);
+  setShowConfirm(false);
+};
+
   return (
     <div className="app">
    <Controls
@@ -163,20 +174,30 @@ useEffect(() => {
   onRun={handleRunCode}
 onSaveCode={handleSaveCode}
   isRunning={isRunning}
-  onDownloadCode={handleDownloadCode}
   layout={layout}
   onLayoutChange={setLayout}
+  setShowConfirm={setShowConfirm}
 />
 
       <PanelGroup direction={splitDirection} className={`main-container ${splitDirection}`}>
 
         <Panel defaultSize={60} minSize={30} className="editor-panel">
-          <CodeEditor
-            language={language}
-            theme={theme}
-            code={code}
-            onCodeChange={setCode}
-          />
+<CodeEditor
+  language={language}
+  theme={theme}
+  code={code}
+  onCodeChange={setCode}
+  version={version}
+  onSave={handleSaveCode}
+  onClear={() => {
+    localStorage.removeItem(`unsaved-${language}`);
+    setCode(BOILERPLATES[language]);
+    setAlertMessage('Editor cleared!');
+    setAlertVisible(true);
+  }}
+  onSubmit={handleFinalSubmit}
+/>
+
         </Panel>
 
 <PanelResizeHandle className={`resize-handle ${theme}`}>
@@ -206,6 +227,12 @@ onSaveCode={handleSaveCode}
         show={alertVisible}
         onClose={() => setAlertVisible(false)}
       />
+
+      <ConfirmSubmit
+  show={showConfirm}
+  onConfirm={handleFinalSubmit}
+  onCancel={() => setShowConfirm(false)}
+/>
     </div>
   );
 };

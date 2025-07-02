@@ -5,6 +5,20 @@
     <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Code Editor</title>
+    <script>
+  if (!sessionStorage.getItem('clearedOnce')) {
+    Object.keys(localStorage).forEach((key) => {
+      if (
+        key.startsWith('unsaved-') ||
+        key === 'theme' ||
+        key === 'language'
+      ) {
+        localStorage.removeItem(key);
+      }
+    });
+    sessionStorage.setItem('clearedOnce', 'true');
+  }
+</script>
   </head>
   <body>
     <div id="root"></div>
