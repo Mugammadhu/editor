@@ -1,80 +1,121 @@
 .controls {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 1.25rem;
   padding: 0.8rem 1.5rem;
   background-color: #252526;
   border-bottom: 1px solid #333;
-  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
+.controls.dark-mode {
+  background-color: #1e293b;
+  border-bottom-color: #334155;
+}
+
 .control-group {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
   position: relative;
+  margin-right: 0.5rem;
 }
 
 .icon-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  position: relative;
+  gap: 0.75rem;
+  cursor: default; /* Prevent pointer cursor */
 }
 
 .icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
-  transition: filter 0.2s ease;
   filter: brightness(0.85);
+  transition: filter 0.2s ease;
+  pointer-events: none; /* Prevent image from being clickable */
 }
 
-select {
+.styled-select {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #3a3a3a;
   background-color: #3e3e42;
   color: #ffffff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
   font-size: 0.9rem;
   cursor: pointer;
-  min-width: 130px;
   appearance: none;
+  min-width: 130px;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
 }
 
-select:hover {
+.styled-select:hover {
   background-color: #4e4e52;
 }
 
-select:focus {
+.styled-select:focus {
   outline: none;
   box-shadow: 0 0 0 2px #007acc;
 }
 
-.control-group::after {
-  content: "▼";
-  font-size: 0.65rem;
-  color: #d4d4d4;
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
+.dark-mode .styled-select {
+  background-color: #334155;
+  border-color: #475569;
+  color: #f8fafc;
 }
 
-.run-button {
-  background-color: #3a8ee6;
-  color: white;
-  padding: 0.45rem 1.2rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.95rem;
-  cursor: pointer;
+.locked-language {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #3e3e42;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ffffff;
+  border: 1px solid #4e4e52;
+}
+
+.dark-mode .locked-language {
+  background-color: #334155;
+}
+
+.lock-icon {
+  font-size: 0.9rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.run-button,
+.submit-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.run-button {
+  background-color: #f39c12;
+  color: white;
+}
+
+.run-button:hover:not(:disabled) {
+  background-color: #e67e22;
 }
 
 .run-button:disabled {
@@ -83,64 +124,48 @@ select:focus {
   opacity: 0.7;
 }
 
-.run-button .icon {
-  width: 14px;
-  height: 14px;
-  filter: brightness(1);
+.run-button.running {
+  background-color: #f59e0b;
 }
 
 .submit-button {
   background-color: #4caf50;
   color: white;
-  padding: 0.45rem 1.2rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.3s ease;
 }
 
-.submit-button:hover {
-  background-color: #299c2d;
+.submit-button:hover:not(:disabled) {
+  background-color: #3e8e40;
 }
 
-.submit-button:active {
-  background-color: #0b5cb3;
+.submit-button:disabled {
+  background-color: #3e3e42;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
-/* Run button */
-.run-button {
-  margin-left: auto;
-  padding: 0.53rem 1.2rem;
-  background-color: #f39c12;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  transition: background-color 0.2s ease;
-  min-width: 120px;
+.button-icon {
+  font-size: 1rem;
 }
 
-.run-button:hover {
-  background-color: #e67e22;
+.button-text {
+  margin-top: 1px;
 }
 
+/* Prevent hand icon on layout/language/theme icons */
+.icon-wrapper .icon {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Optional: ensure icon-wrapper isn't clickable */
+.icon-wrapper {
+  cursor: default;
+}
 
 @media (max-width: 768px) {
   .controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2.5rem;
-    padding: 0.6rem 1rem;
+    gap: 1rem;
+    padding: 0.75rem;
   }
 
   .control-group {
@@ -148,13 +173,18 @@ select:focus {
     justify-content: space-between;
   }
 
-  select {
+  .styled-select {
     width: 100%;
+  }
+
+  .action-buttons {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
   }
 
   .run-button,
   .submit-button {
     width: 100%;
-    margin-left: 0;
   }
 }

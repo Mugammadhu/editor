@@ -52,50 +52,103 @@ const Controls = ({
   isRunning,
   layout,
   onLayoutChange,
-  setShowConfirm
+  setShowConfirm,
+  isLanguageLocked, 
+  lockedLanguage,
+  isEditable = true
 }) => {
+  const currentLangIcon = languageOptions.find(l => l.value === language)?.icon;
+  const currentThemeIcon = themeOptions.find(t => t.value === theme)?.icon;
+  const currentLayoutIcon = layoutOptions.find(l => l.value === layout)?.icon;
+
   return (
-    <div className="controls">
+    <div className={`controls ${theme === 'vs-dark' ? 'dark-mode' : ''}`}>
       <div className="control-group language-select">
         <div className="icon-wrapper">
-          <img src={languageOptions.find(l => l.value === language)?.icon} alt="Lang" className="icon" />
-          <select value={language} onChange={e => onLanguageChange(e.target.value)}>
-            {languageOptions.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
+          <img src={currentLangIcon} alt="Language" className="icon" />
+          {isLanguageLocked ? (
+            <div className="locked-language">
+              <strong>{(lockedLanguage || language).toUpperCase()}</strong>
+              <span className="lock-icon">🔒</span>
+            </div>
+          ) : (
+            <select 
+              value={language} 
+              onChange={(e) => onLanguageChange(e.target.value)}
+              disabled={!isEditable}
+              className="styled-select"
+            >
+              {languageOptions.map(({ value, label }) => (
+                <option key={`lang-${value}`} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
       <div className="control-group theme-select">
         <div className="icon-wrapper">
-          <img src={themeOptions.find(t => t.value === theme)?.icon} alt="Theme" className="icon" />
-          <select value={theme} onChange={e => onThemeChange(e.target.value)}>
+          <img src={currentThemeIcon} alt="Theme" className="icon" />
+          <select 
+            value={theme} 
+            onChange={e => onThemeChange(e.target.value)}
+            className="styled-select"
+          >
             {themeOptions.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={`theme-${value}`} value={value}>
+                {label}
+              </option>
             ))}
           </select>
         </div>
       </div>
 
-      <div className="control-group layout-select">
-        <div className="icon-wrapper">
-          <img src={layoutOptions.find(l => l.value === layout)?.icon} alt="Layout" className="icon" />
-          <select value={layout} onChange={e => onLayoutChange(e.target.value)}>
-            {layoutOptions.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
-        </div>
+<div className="control-group layout-select">
+<div className="icon-wrapper">
+  <div className="icon-container">
+    <img src={currentLayoutIcon} alt="Layout" className="icon" />
+  </div>
+  <select 
+    value={layout} 
+    onChange={e => onLayoutChange(e.target.value)}
+    className="styled-select"
+  >
+    {layoutOptions.map(({ value, label }) => (
+      <option key={`layout-${value}`} value={value}>
+        {label}
+      </option>
+    ))}
+  </select>
+</div>
+
+</div>
+
+
+      <div className="action-buttons">
+        <button 
+          className={`run-button ${isRunning ? 'running' : ''}`} 
+          onClick={onRun} 
+          disabled={isRunning || !isEditable}
+          aria-label={isRunning ? 'Code is running' : 'Run code'}
+        >
+          <span className="button-icon">▶️</span>
+          <span className="button-text">
+            {isRunning ? 'Running...' : 'Run Code'}
+          </span>
+        </button>
+
+        <button 
+          className="submit-button" 
+          onClick={() => setShowConfirm(true)}
+          disabled={!isEditable}
+          aria-label="Submit code"
+        >
+          <span className="button-icon">🚀</span>
+          <span className="button-text">Submit</span>
+        </button>
       </div>
-
-      <button className="run-button" onClick={onRun} disabled={isRunning}>
-         {isRunning ? '⏳ Running...' : '▶️ Run Code'}
-      </button>
-
-      <button className="submit-button" onClick={() => setShowConfirm(true)}>
-        🚀 Submit
-      </button>
     </div>
   );
 };

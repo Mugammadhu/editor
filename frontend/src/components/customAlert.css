@@ -7,7 +7,7 @@
   padding: 1rem 1.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: right 0.5s ease, opacity 0.5s ease;
+  transition: right 0.5s ease opacity 0.5s ease;
   opacity: 0;
   z-index: 9999;
   font-size: 1rem;

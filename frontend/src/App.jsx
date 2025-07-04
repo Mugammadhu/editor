@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Controls from './components/Controls';
@@ -10,15 +9,11 @@ import CustomAlert from './components/CustomAlert';
 import ConfirmSubmit from './components/ConfirmSubmit';
 import './App.css';
 
-//svg
+// SVG imports
 import verticalLight from './assets/resizers/vertical-light.svg';
 import verticalDark from './assets/resizers/vertical-dark.svg';
-
-
 import horizontalLight from './assets/resizers/horizontal-light.svg';
 import horizontalDark from './assets/resizers/horizontal-dark.svg';
-
-
 
 const BOILERPLATES = {
   python: 'print("Hello, World!")\n',
@@ -49,39 +44,43 @@ const LANGUAGE_VERSIONS = {
 };
 
 const App = () => {
-const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'python');
-const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'vs');
-  const [code, setCode] = useState(BOILERPLATES.python);
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'python');
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'vs');
+  const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-const [layout, setLayout] = useState('vertical');
-const splitDirection = layout === 'vertical' ? 'horizontal' : 'vertical';
-const version=LANGUAGE_VERSIONS[language];
-const [showConfirm, setShowConfirm] = useState(false);
+  const [layout, setLayout] = useState('vertical');
+  const splitDirection = layout === 'vertical' ? 'horizontal' : 'vertical';
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [receivedQuestion, setReceivedQuestion] = useState('');
+  const [receivedLanguage, setReceivedLanguage] = useState('');
+  const [isLanguageLocked, setIsLanguageLocked] = useState(false);
+  const [isEditable, setIsEditable] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false); // New state to track initialization
 
-
-useEffect(() => {
-  localStorage.setItem('language', language);
-}, [language]);
-
-useEffect(() => {
-  localStorage.setItem('theme', theme);
-}, [theme]);
-
-useEffect(() => {
-    const savedCode = localStorage.getItem(`code-${language}`);
-    const unsavedCode = localStorage.getItem(`unsaved-${language}`);
-    
-    // Priority: unsaved changes > saved code > boilerplate
-    setCode(unsavedCode || savedCode || BOILERPLATES[language]);
+  useEffect(() => {
+    localStorage.setItem('language', language);
   }, [language]);
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // Initialize code only when language changes and not already set by parent
+  useEffect(() => {
+    if (isInitialized) {
+      const savedCode = localStorage.getItem(`code-${language}`);
+      const unsavedCode = localStorage.getItem(`unsaved-${language}`);
+      setCode(unsavedCode || savedCode || BOILERPLATES[language] || '');
+    }
+  }, [language, isInitialized]);
 
   // Auto-save unsaved changes (debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (code !== BOILERPLATES[language]) {
+      if (code && code !== BOILERPLATES[language]) {
         localStorage.setItem(`unsaved-${language}`, code);
       } else {
         localStorage.removeItem(`unsaved-${language}`);
@@ -91,6 +90,42 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }, [code, language]);
 
+  // Handle messages from parent
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (!event.origin.includes("localhost")) return;
+
+      if (event.data?.type === "INIT") {
+        const { question, language: parentLanguage } = event.data.payload || {};
+
+        setReceivedQuestion(question);
+        setReceivedLanguage(parentLanguage);
+
+        if (parentLanguage === "all") {
+          setLanguage('python');
+          setIsLanguageLocked(false);
+          setIsEditable(true);
+        } else {
+          setLanguage(parentLanguage);
+          setIsLanguageLocked(true);
+          setIsEditable(true);
+
+          // Only set code if not already initialized or if no user edits exist
+          const existingCode = localStorage.getItem(`unsaved-${parentLanguage}`) ||
+                             localStorage.getItem(`code-${parentLanguage}`);
+          if (!isInitialized || !existingCode) {
+            setCode(BOILERPLATES[parentLanguage] || '');
+          }
+        }
+
+        setIsInitialized(true); // Mark as initialized
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
   const handleSaveCode = () => {
     localStorage.setItem(`code-${language}`, code);
     localStorage.removeItem(`unsaved-${language}`);
@@ -98,6 +133,20 @@ useEffect(() => {
     setAlertVisible(true);
   };
 
+  const handleCodeChange = (newCode) => {
+    if (isEditable) {
+      setCode(newCode);
+    }
+  };
+
+  const handleClearCode = () => {
+    if (isEditable) {
+      localStorage.removeItem(`unsaved-${language}`);
+      setCode(BOILERPLATES[language]);
+      setAlertMessage('Editor cleared!');
+      setAlertVisible(true);
+    }
+  };
 
   const handleRunCode = async () => {
     if (!code.trim()) {
@@ -155,70 +204,67 @@ useEffect(() => {
     URL.revokeObjectURL(url);
   };
 
-
   const handleFinalSubmit = () => {
-  // Your submit logic
-  handleDownloadCode()
-  setAlertMessage('Code submitted successfully!');
-  setAlertVisible(true);
-  setShowConfirm(false);
-};
+    handleDownloadCode();
+    setAlertMessage('Code submitted successfully!');
+    setAlertVisible(true);
+    setShowConfirm(false);
+  };
 
   return (
     <div className="app">
-   <Controls
-  language={language}
-  theme={theme}
-  onLanguageChange={setLanguage}
-  onThemeChange={setTheme}
-  onRun={handleRunCode}
-onSaveCode={handleSaveCode}
-  isRunning={isRunning}
-  layout={layout}
-  onLayoutChange={setLayout}
-  setShowConfirm={setShowConfirm}
-/>
+      <Controls
+        language={language}
+        theme={theme}
+        onLanguageChange={(newLang) => {
+          if (!isLanguageLocked) {
+            setLanguage(newLang);
+          }
+        }}
+        onThemeChange={setTheme}
+        onRun={handleRunCode}
+        onSaveCode={handleSaveCode}
+        isRunning={isRunning}
+        layout={layout}
+        onLayoutChange={setLayout}
+        setShowConfirm={setShowConfirm}
+        isLanguageLocked={isLanguageLocked}
+        lockedLanguage={receivedLanguage || language}
+        isEditable={isEditable}
+      />
 
       <PanelGroup direction={splitDirection} className={`main-container ${splitDirection}`}>
-
         <Panel defaultSize={60} minSize={30} className="editor-panel">
-<CodeEditor
-  language={language}
-  theme={theme}
-  code={code}
-  onCodeChange={setCode}
-  version={version}
-  onSave={handleSaveCode}
-  onClear={() => {
-    localStorage.removeItem(`unsaved-${language}`);
-    setCode(BOILERPLATES[language]);
-    setAlertMessage('Editor cleared!');
-    setAlertVisible(true);
-  }}
-  onSubmit={handleFinalSubmit}
-/>
-
+          <CodeEditor
+            language={language}
+            theme={theme}
+            code={code}
+            onCodeChange={handleCodeChange}
+            version={LANGUAGE_VERSIONS[language]}
+            onSave={handleSaveCode}
+            onClear={handleClearCode}
+            readOnly={!isEditable}
+          />
         </Panel>
 
-<PanelResizeHandle className={`resize-handle ${theme}`}>
-  <img
-    src={
-      layout === 'vertical'
-        ? theme === 'vs' ?  verticalDark : theme === 'vs-dark' ? verticalLight  : verticalDark
-        : theme === 'vs' ?  horizontalDark : theme === 'vs-dark' ? horizontalLight :   horizontalDark
-    }
-    alt="Resize Handle"
-    className="resize-icon"
-  />
-</PanelResizeHandle>
+        <PanelResizeHandle className={`resize-handle ${theme}`}>
+          <img
+            src={
+              layout === 'vertical'
+                ? theme === 'vs' ? verticalLight : verticalDark
+                : theme === 'vs' ? horizontalLight : horizontalDark
+            }
+            alt="Resize Handle"
+            className="resize-icon"
+          />
+        </PanelResizeHandle>
 
-
-        <Panel defaultSize={40} minSize={20} className="output-panel">
-<Output
-  output={output}
-  onClear={handleClearOutput}
-  theme={theme}
-/>
+        <Panel defaultSize={40} minSize={30} className="output-panel">
+          <Output
+            output={output}
+            onClear={handleClearOutput}
+            theme={theme}
+          />
         </Panel>
       </PanelGroup>
 
@@ -229,10 +275,10 @@ onSaveCode={handleSaveCode}
       />
 
       <ConfirmSubmit
-  show={showConfirm}
-  onConfirm={handleFinalSubmit}
-  onCancel={() => setShowConfirm(false)}
-/>
+        show={showConfirm}
+        onConfirm={handleFinalSubmit}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 };
