@@ -1,40 +1,29 @@
 const express = require('express');
-const axios = require('axios');
+const mongoose = require('mongoose');
 const cors = require('cors');
+const dotenv = require('dotenv');
+const submissionRoutes = require('./routes/submissions');
+
+dotenv.config();
 
 const app = express();
-const PORT = 3001;
 
-app.use(cors());
+// Middleware
+app.use(cors({
+  origin: [process.env.PARENT_URI, process.env.CHILD_URI], // Allow parent and child origins
+}));
 app.use(express.json());
 
-app.post('/api/execute', async (req, res) => {
-  try {
-    const { script, language, stdin, versionIndex } = req.body;
-    
-    if (!script || !language) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
+// Routes
+app.use('/api/submissions', submissionRoutes);
 
-    const response = await axios.post('https://api.jdoodle.com/v1/execute', {
-      clientId: "43754600ceb6f534cefd7fe53aa0bf73",
-      clientSecret: "bb8042315e97026316f565075b5782f0e9b92defb9001237519cb1264cde6c8b",
-      script,
-      language,
-      stdin: stdin || '',
-      versionIndex: versionIndex || '0'
-    });
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('MongoDB connection error:', err));
 
-    res.json(response.data);
-  } catch (error) {
-    console.error('Execution error:', error.response?.data || error.message);
-    res.status(500).json({ 
-      error: error.response?.data?.error || error.message,
-      status: error.response?.status || 500
-    });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

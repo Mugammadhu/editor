@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Controls from './components/Controls';
@@ -54,12 +53,11 @@ const App = () => {
   });
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
+const [alertMessages, setAlertMessages] = useState([]);
   const [layout, setLayout] = useState('vertical');
   const splitDirection = layout === 'vertical' ? 'horizontal' : 'vertical';
   const [showConfirm, setShowConfirm] = useState(false);
-  const [receivedQuestion, setReceivedQuestion] = useState('');
+  const [receivedQuestion, setReceivedQuestion] = useState('Write a program');
   const [receivedLanguage, setReceivedLanguage] = useState('');
   const [isLanguageLocked, setIsLanguageLocked] = useState(false);
   const [isEditable, setIsEditable] = useState(true);
@@ -107,7 +105,7 @@ const App = () => {
       if (event.data?.type === "INIT") {
         const { question, language: parentLanguage } = event.data.payload || {};
 
-        setReceivedQuestion(question);
+setReceivedQuestion(question || 'Write a program');
         setReceivedLanguage(parentLanguage);
 
         if (parentLanguage === "all") {
@@ -139,8 +137,7 @@ const App = () => {
   const handleSaveCode = () => {
     localStorage.setItem(`code-${language}`, code);
     localStorage.removeItem(`unsaved-${language}`);
-    setAlertMessage('Code saved!');
-    setAlertVisible(true);
+setAlertMessages((prev) => [{ text: 'Code saved!', type: 'success' }, ...prev]);
   };
 
 
@@ -155,8 +152,7 @@ const App = () => {
     if (isEditable) {
       localStorage.removeItem(`unsaved-${language}`);
       setCode(BOILERPLATES[language]);
-      setAlertMessage('Editor cleared!');
-      setAlertVisible(true);
+setAlertMessages((prev) => [{ text: 'Editor cleared!', type: 'info' }, ...prev]);
     }
   };
 
@@ -164,6 +160,7 @@ const App = () => {
   const handleRunCode = async () => {
     if (!code.trim()) {
       setOutput('Error: Please enter some code');
+setAlertMessages((prev) => [{ text: 'Error: Please enter some code', type: 'error' }, ...prev]);
       return;
     }
 
@@ -180,6 +177,7 @@ const App = () => {
       setOutput(response.data.run.output || 'No output');
     } catch (error) {
       setOutput(`Error: ${error.response?.data?.message || error.message}`);
+setAlertMessages((prev) => [{ text: `Error: ${error.response?.data?.message || error.message}`, type: 'error' }, ...prev]);
     } finally {
       setIsRunning(false);
     }
@@ -187,7 +185,8 @@ const App = () => {
 
 
   const handleClearOutput = () => {
-    setOutput('');
+ setOutput('');
+setAlertMessages((prev) => [{ text: 'Output cleared!', type: 'info' }, ...prev]);
   };
 
   const handleDownloadCode = () => {
@@ -217,14 +216,56 @@ const App = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    setAlertMessages((prev) => [{ text: 'Code downloaded!', type: 'success' }, ...prev]);
   };
 
-  const handleFinalSubmit = () => {
+//submit function
+ const handleFinalSubmit = async () => {
+  try {
+    // Log data being sent
+    console.log('Submitting data:', { question: receivedQuestion, language, code });
+
+    // Validate data
+    if (!receivedQuestion || !language || !code) {
+setAlertMessages((prev) => [{ text: 'Error: Language and code are required', type: 'error' }, ...prev]);
+      console.error('Validation failed:', {
+        question: receivedQuestion,
+        language,
+        code,
+      });
+      return;
+    }
+
+    // Save submission to MongoDB
+    const response = await axios.post('http://localhost:5000/api/submissions', {
+      question: receivedQuestion,
+      language,
+      code,
+    });
+
+    // Download the code
     handleDownloadCode();
-    setAlertMessage('Code submitted successfully!');
-    setAlertVisible(true);
+
+    // Send message to parent to redirect to preview page with submission ID
+    window.parent.postMessage(
+      {
+        type: 'SUBMIT',
+        payload: { submissionId: response.data.id },
+      },
+      'http://localhost:5174' // Ensure this matches parent app origin
+    );
+
+setAlertMessages((prev) => [{ text: 'Code submitted successfully!', type: 'success' }, ...prev]);
     setShowConfirm(false);
-  };
+  } catch (error) {
+setAlertMessages((prev) => [{ text: `Failed to submit code: ${error.response?.data?.error || error.message}`, type: 'error' }, ...prev]);
+    console.error('Submission error:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+  }
+};
 
   return (
     <div className="app">
@@ -283,11 +324,11 @@ const App = () => {
         </Panel>
       </PanelGroup>
 
-      <CustomAlert
-        message={alertMessage}
-        show={alertVisible}
-        onClose={() => setAlertVisible(false)}
-      />
+<CustomAlert
+  messages={alertMessages}
+  duration={3000}
+  onClose={setAlertMessages}
+/>
 
       <ConfirmSubmit
         show={showConfirm}

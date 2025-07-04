@@ -1,20 +1,82 @@
-.custom-alert {
+
+.alert-container {
   position: fixed;
   top: 20px;
-  right: -300px;
-  background-color: #007acc;
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: right 0.5s ease opacity 0.5s ease;
-  opacity: 0;
+  right: 20px;
   z-index: 9999;
-  font-size: 1rem;
 }
 
-.custom-alert.show {
-  right: 50%;
-  transform: translateX(50%);
-  opacity: 1;
+.custom-alert {
+  padding: 1rem 2.5rem 1rem 1.5rem; /* Extra padding-right for close button */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 300px; /* Fixed width for consistency */
+  margin-bottom: 10px; /* Space between stacked alerts */
+  color: white;
+  transition: transform 0.4s ease, opacity 0.4s ease, top 0.4s ease; /* Smooth transitions for position and visibility */
+  animation: slideIn 0.4s ease forwards; /* Slide-in animation */
+}
+
+/* State-based colors */
+.alert-success {
+  background-color: #28a745; /* Green for success */
+}
+
+.alert-error {
+  background-color: #dc3545; /* Red for error */
+}
+
+.alert-info {
+  background-color: #007acc; /* Blue for info (default) */
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Fade-out animation when not shown */
+.custom-alert:not(.show) {
+  animation: fadeOut 0.4s ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  line-height: 1;
+  transition: color 0.2s ease; /* Smooth hover transition */
+}
+
+.close-button:hover {
+  color: #e0e0e0;
+}
+
+.alert-message {
+  flex: 1;
 }
