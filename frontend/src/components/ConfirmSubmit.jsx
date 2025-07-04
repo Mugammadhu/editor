@@ -3,8 +3,8 @@ import './confirmSubmit.css';
 
 const ConfirmSubmit = ({ show, onConfirm, onCancel }) => {
   return (
-    <div className={`confirm-container ${show ? 'show' : ''}`}>
-      <div className="confirm-box">
+    <div className={`confirm-container ${show ? 'show' : ''}`} onClick={onCancel}>
+      <div className="confirm-box" onClick={(e) => e.stopPropagation()}>
         <h4>Confirm Submission</h4>
         <p>Are you sure you want to submit the final version of your code?</p>
         <div className="confirm-buttons">

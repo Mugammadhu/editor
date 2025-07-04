@@ -46,7 +46,12 @@ const LANGUAGE_VERSIONS = {
 const App = () => {
   const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'python');
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'vs');
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(() => {
+    const lang = localStorage.getItem('language') || 'python';
+    const savedCode = localStorage.getItem(`code-${lang}`);
+    const unsavedCode = localStorage.getItem(`unsaved-${lang}`);
+    return unsavedCode || savedCode || BOILERPLATES[lang] || '';
+  });
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
@@ -62,6 +67,10 @@ const App = () => {
 
   useEffect(() => {
     localStorage.setItem('language', language);
+    // Load code when language changes
+    const savedCode = localStorage.getItem(`code-${language}`);
+    const unsavedCode = localStorage.getItem(`unsaved-${language}`);
+    setCode(unsavedCode || savedCode || BOILERPLATES[language] || '');
   }, [language]);
 
   useEffect(() => {
@@ -126,6 +135,7 @@ const App = () => {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
+
   const handleSaveCode = () => {
     localStorage.setItem(`code-${language}`, code);
     localStorage.removeItem(`unsaved-${language}`);
@@ -133,11 +143,13 @@ const App = () => {
     setAlertVisible(true);
   };
 
+
   const handleCodeChange = (newCode) => {
     if (isEditable) {
       setCode(newCode);
     }
   };
+
 
   const handleClearCode = () => {
     if (isEditable) {
@@ -147,6 +159,7 @@ const App = () => {
       setAlertVisible(true);
     }
   };
+
 
   const handleRunCode = async () => {
     if (!code.trim()) {
@@ -172,11 +185,13 @@ const App = () => {
     }
   };
 
+
   const handleClearOutput = () => {
     setOutput('');
   };
 
   const handleDownloadCode = () => {
+    console.log('handleDownloadCode triggered');
     const extensionMap = {
       python: 'py',
       javascript: 'js',

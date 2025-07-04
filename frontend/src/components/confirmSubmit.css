@@ -1,15 +1,21 @@
 .confirm-container {
   position: fixed;
-  top: -100px;
+  top: -150%; /* Move further off-screen initially */
   left: 50%;
   transform: translateX(-50%);
   transition: top 0.4s ease, opacity 0.4s ease;
   opacity: 0;
   z-index: 1000;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5); /* Backdrop to block clicks */
 }
 
 .confirm-container.show {
-  top: 2rem;
+  top: 20%; /* Adjusted for better centering */
   opacity: 1;
 }
 
@@ -22,6 +28,8 @@
   max-width: 400px;
   width: 90%;
   text-align: center;
+  position: relative; /* Ensure it’s positioned within the container */
+  z-index: 1001; /* Above the backdrop */
 }
 
 .confirm-box h4 {
