@@ -1,4 +1,4 @@
-
+/* Base Alert Container */
 .alert-container {
   position: fixed;
   top: 20px;
@@ -6,77 +6,66 @@
   z-index: 9999;
 }
 
+/* Custom Alert */
 .custom-alert {
   padding: 1rem 2.5rem 1rem 1.5rem; /* Extra padding-right for close button */
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 300px; /* Fixed width for consistency */
-  margin-bottom: 10px; /* Space between stacked alerts */
+  width: 320px; /* Slightly increased for better readability */
+  margin-bottom: 15px; /* More space between stacked alerts */
   color: white;
-  transition: transform 0.4s ease, opacity 0.4s ease, top 0.4s ease; /* Smooth transitions for position and visibility */
-  animation: slideIn 0.4s ease forwards; /* Slide-in animation */
+  transition: all 0.2s ease;
 }
 
-/* State-based colors */
+/* State-based colors with gradients */
 .alert-success {
-  background-color: #28a745; /* Green for success */
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
 }
 
 .alert-error {
-  background-color: #dc3545; /* Red for error */
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
 }
 
 .alert-info {
-  background-color: #007acc; /* Blue for info (default) */
+  background: linear-gradient(135deg, #007acc 0%, #005f99 100%);
 }
 
-/* Slide-in animation */
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+/* Alert Message */
+.alert-message {
+  flex: 1;
+  word-break: break-word;
 }
 
-/* Fade-out animation when not shown */
-.custom-alert:not(.show) {
-  animation: fadeOut 0.4s ease forwards;
-}
-
-@keyframes fadeOut {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
+/* Close Button */
 .close-button {
   background: none;
   border: none;
   color: white;
-  font-size: 1rem;
+  font-size: 1.2rem;
   cursor: pointer;
   padding: 0 0.5rem;
   line-height: 1;
-  transition: color 0.2s ease; /* Smooth hover transition */
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.close-button:hover {
-  color: #e0e0e0;
-}
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .alert-container {
+    right: 10px;
+    top: 10px;
+  }
 
-.alert-message {
-  flex: 1;
+  .custom-alert {
+    width: 90%;
+    padding: 0.8rem 2rem 0.8rem 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .close-button {
+    font-size: 1rem;
+  }
 }

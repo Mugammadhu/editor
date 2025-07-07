@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import pythonIcon from "../assets/icons/python.svg";
 import javascriptIcon from "../assets/icons/javascript.svg";
 import javaIcon from "../assets/icons/java.svg";
@@ -121,7 +122,12 @@ const Controls = ({
   };
 
   return (
-    <div className={`controls ${theme === "vs-dark" ? "dark-mode" : ""}`}>
+    <motion.div
+      className={`controls ${theme === "vs-dark" ? "dark-mode" : ""}`}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="control-group language-select">
         <div className="icon-wrapper">
           <img src={currentLangIcon} alt="Language" className="icon" />
@@ -131,18 +137,20 @@ const Controls = ({
               <span className="lock-icon">🔒</span>
             </div>
           ) : (
-            <select
+            <motion.select
               value={language}
               onChange={(e) => onLanguageChange(e.target.value)}
               disabled={!isEditable}
               className="styled-select"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               {languageOptions.map(({ value, label }) => (
                 <option key={`lang-${value}`} value={value}>
                   {label}
                 </option>
               ))}
-            </select>
+            </motion.select>
           )}
         </div>
       </div>
@@ -150,17 +158,19 @@ const Controls = ({
       <div className="control-group theme-select">
         <div className="icon-wrapper">
           <img src={currentThemeIcon} alt="Theme" className="icon" />
-          <select
+          <motion.select
             value={theme}
             onChange={(e) => onThemeChange(e.target.value)}
             className="styled-select"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             {themeOptions.map(({ value, label }) => (
               <option key={`theme-${value}`} value={value}>
                 {label}
               </option>
             ))}
-          </select>
+          </motion.select>
         </div>
       </div>
 
@@ -169,105 +179,126 @@ const Controls = ({
           <div className="icon-container">
             <img src={currentLayoutIcon} alt="Layout" className="icon" />
           </div>
-          <select
+          <motion.select
             value={layout}
             onChange={(e) => onLayoutChange(e.target.value)}
             className="styled-select"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             {layoutOptions.map(({ value, label }) => (
               <option key={`layout-${value}`} value={value}>
                 {label}
               </option>
             ))}
-          </select>
+          </motion.select>
         </div>
 
         <div className="action-select-container options">
-          <button
+          <motion.button
             className="action-select-button"
             onClick={() => setShowActionPopup(!showActionPopup)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             ⚙️ Select Actions
-          </button>
+          </motion.button>
 
-          {showActionPopup && (
-            <div
-              className={`action-popup ${theme === "vs-dark" ? "dark" : ""}`}
-            >
-              <div className="action-popup-header">
-                <h4>Select Actions to Show</h4>
-                <button
-                  className="close-popup"
-                  onClick={() => setShowActionPopup(false)}
-                >
-                  ×
-                </button>
-              </div>
-              <div className="action-options">
-                {actionOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    className={`action-option ${tempSelectedActions.includes(option.value) ? 'selected' : ''}`}
-                    onClick={() => toggleAction(option.value)}
-                  >
-                    <div className="radio-toggle">
-                      <input
-                        type="checkbox"
-                        checked={tempSelectedActions.includes(option.value)}
-                        onChange={() => toggleAction(option.value)}
-                      />
-                      <span className="radio-slider"></span>
-                    </div>
-                    <span className="action-option-content">
-                      <span className="action-icon">{option.icon}</span>
-                      <span className="action-label">{option.label}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <button
-                className="apply-actions-button"
-                onClick={handleApply}
+          <AnimatePresence>
+            {showActionPopup && (
+              <motion.div
+                className={`action-popup ${theme === "vs-dark" ? "dark" : ""}`}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
               >
-                Apply
-              </button>
-            </div>
-          )}
+                <div className="action-popup-header">
+                  <h4>Select Actions to Show</h4>
+                  <motion.button
+                    className="close-popup"
+                    onClick={() => setShowActionPopup(false)}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    ×
+                  </motion.button>
+                </div>
+                <div className="action-options">
+                  {actionOptions.map((option) => (
+                    <motion.div
+                      key={option.value}
+                      className={`action-option ${tempSelectedActions.includes(option.value) ? 'selected' : ''}`}
+                      onClick={() => toggleAction(option.value)}
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <div className="radio-toggle">
+                        <input
+                          type="checkbox"
+                          checked={tempSelectedActions.includes(option.value)}
+                          onChange={() => toggleAction(option.value)}
+                        />
+                        <span className="radio-slider"></span>
+                      </div>
+                      <span className="action-option-content">
+                        <span className="action-icon" style={{ color: option.bgcolor }}>{option.icon}</span>
+                        <span className="action-label">{option.label}</span>
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+                <motion.button
+                  className="apply-actions-button"
+                  onClick={handleApply}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Apply
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       <div className="action-buttons">
-        <button
+        <motion.button
           className={`run-button ${isRunning ? "running" : ""}`}
           onClick={onRun}
           disabled={isRunning || !isEditable}
           aria-label={isRunning ? "Code is running" : "Run code"}
+          whileHover={{ scale: isRunning || !isEditable ? 1 : 1.05 }}
+          whileTap={{ scale: isRunning || !isEditable ? 1 : 0.95 }}
         >
           <span className="button-icon">▶️</span>
           <span className="button-text">
             {isRunning ? "Running..." : "Run Code"}
           </span>
-        </button>
+        </motion.button>
         {selectedActions.includes("download") && (
-          <button
+          <motion.button
             onClick={handleDownloadCode}
             className="action-button download-button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <span className="button-icon">⤵️</span>
             <span className="button-text">Download</span>
-          </button>
+          </motion.button>
         )}
-        <button
+        <motion.button
           className="submit-button"
           onClick={() => setShowConfirm(true)}
           disabled={!isEditable}
           aria-label="Submit code"
+          whileHover={{ scale: isEditable ? 1.05 : 1 }}
+          whileTap={{ scale: isEditable ? 0.95 : 1 }}
         >
           <span className="button-icon">🚀</span>
           <span className="button-text">Submit</span>
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

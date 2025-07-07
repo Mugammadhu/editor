@@ -7,6 +7,8 @@
   background-color: #252526;
   border-bottom: 1px solid #333;
   flex-wrap: wrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .controls.dark-mode {
@@ -55,13 +57,17 @@
   background-repeat: no-repeat;
   background-position: right 0.5rem center;
   background-size: 1rem;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
-.layout{
+
+.layout {
   position: relative;
   left: -10px;
 }
+
 .styled-select:hover {
   background-color: #4e4e52;
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
 }
 
 .styled-select:focus {
@@ -87,6 +93,7 @@
   color: #ffffff;
   border: 1px solid #4e4e52;
   position: relative;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .dark-mode .locked-language {
@@ -120,6 +127,7 @@
   min-width: 120px;
   justify-content: center;
   color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .run-button {
@@ -170,10 +178,11 @@
   margin-top: 1px;
 }
 
-.options{
+.options {
   position: relative;
   left: 10px;
 }
+
 /* Action Selection Popup */
 .action-select-container {
   position: relative;
@@ -191,6 +200,7 @@
   align-items: center;
   gap: 0.5rem;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .dark-mode .action-select-button {
@@ -215,6 +225,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   padding: 1rem;
   z-index: 100;
+  transition: opacity 0.3s ease;
 }
 
 .dark-mode .action-popup {
@@ -242,6 +253,11 @@
   font-size: 1.2rem;
   cursor: pointer;
   color: #d4d4d4;
+  transition: color 0.2s ease;
+}
+
+.close-popup:hover {
+  color: #ffffff;
 }
 
 /* Radio Pill Options */
@@ -249,7 +265,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  
 }
 
 .action-option {
@@ -260,6 +275,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .action-option:hover {
@@ -269,9 +285,11 @@
 .action-option.selected {
   background-color: rgba(0, 122, 204, 0.2);
 }
-.action-label{
+
+.action-label {
   color: #fff;
 }
+
 /* Custom Radio Button */
 .radio-toggle {
   position: relative;
@@ -294,7 +312,7 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 20px;
 }
 
@@ -306,7 +324,7 @@
   left: 2px;
   bottom: 2px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
@@ -329,6 +347,7 @@ input:checked + .radio-slider:before {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .apply-actions-button:hover {

@@ -5,21 +5,25 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 1200;
 }
 
 /* Theme Variations for Container */
 .editor-container.light {
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
   color: #1e1e1e;
 }
 
 .editor-container.dark {
-  background-color: #1e1e1e;
+  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
   color: #f5f5f5;
 }
 
 .editor-container.contrast {
-  background-color: #1e1e1e;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
   color: #f5f5f5;
 }
 
@@ -30,12 +34,16 @@
   align-items: center;
   padding: 0.6rem 1rem;
   border-bottom: 1px solid;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s ease;
 }
 
 .editor-header h3 {
   font-size: 1rem;
   margin: 0;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Theme-specific Header Styles */
@@ -70,10 +78,11 @@
   border-radius: 4px;
   cursor: pointer;
   color: #fff;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Save Button */
@@ -83,6 +92,7 @@
 
 .save-button:hover {
   background-color: #3e8e40 !important;
+  transform: translateY(-1px);
 }
 
 /* Clear Button */
@@ -92,6 +102,7 @@
 
 .clear-button:hover {
   background-color: #dc2626;
+  transform: translateY(-1px);
 }
 
 /* Editor Content Area */
@@ -99,6 +110,8 @@
   flex-grow: 1;
   overflow: auto;
   margin-top: 0.5rem;
+  border-radius: 0 0 8px 8px;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Read-only State */
@@ -109,4 +122,27 @@
 .editor-container.read-only .editor-header {
   background-color: inherit;
   border-bottom-color: transparent;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .editor-container {
+    padding: 0.5rem;
+  }
+
+  .editor-header {
+    padding: 0.4rem 0.8rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .editor-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .editor-actions button {
+    width: 100%;
+    justify-content: center;
+  }
 }

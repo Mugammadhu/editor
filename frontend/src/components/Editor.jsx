@@ -1,92 +1,5 @@
-// import React from "react";
-// import Editor from "@monaco-editor/react";
-// import "./editor.css";
-
-// const CodeEditor = ({
-//   language,
-//   theme,
-//   code,
-//   onCodeChange,
-//   version,
-//   onClear,
-//   onSave,
-//   readOnly = false,
-//   selectedActions,
-// }) => {
-//   const handleEditorDidMount = (editor, monaco) => {
-//     if (readOnly) {
-//       editor.updateOptions({ readOnly: true });
-//     } else {
-//       editor.onKeyDown((e) => {
-//         if ((e.ctrlKey || e.metaKey) && e.keyCode === monaco.KeyCode.KeyV) {
-//           e.preventDefault();
-//           e.stopPropagation();
-//         }
-//       });
-
-//       editor.onContextMenu((e) => {
-//         const pasteAction = editor.getAction(
-//           "editor.action.clipboardPasteAction"
-//         );
-//         if (pasteAction) pasteAction.disabled = true;
-//       });
-//     }
-//   };
-
-//   return (
-//     <div
-//       className={`editor-container ${
-//         theme === "vs-dark" ? "dark" : theme === "vs" ? "light" : "contrast"
-//       }`}
-//     >
-//       <div className="editor-header">
-//         <h3>
-//           {language} {version}
-//         </h3>
-//                 <div className="editor-actions">
-//           {selectedActions.includes('clear') && (
-//             <button onClick={onClear} className="action-button">
-//               🧹 Clear Code
-//             </button>
-//           )}
-//           {selectedActions.includes('save') && (
-//             <button onClick={onSave} className="action-button">
-//               💾 Save Code
-//             </button>
-//           )}
-//         </div>
-//       </div>
-//       <div className="editor-content">
-//         <Editor
-//           height="100%"
-//           language={language}
-//           theme={theme}
-//           value={code}
-//           onChange={readOnly ? undefined : onCodeChange}
-//           onMount={handleEditorDidMount}
-//           options={{
-//             minimap: { enabled: false },
-//             fontSize: 14,
-//             wordWrap: "on",
-//             automaticLayout: true,
-//             scrollBeyondLastLine: false,
-//             lineNumbersMinChars: 3,
-//             readOnly: readOnly,
-//             quickSuggestions: !readOnly,
-//             suggestOnTriggerCharacters: !readOnly,
-//             acceptSuggestionOnEnter: readOnly ? "off" : "on",
-//             snippetSuggestions: readOnly ? "none" : "inline",
-//           }}
-//         />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CodeEditor;
-
-
 import React from "react";
+import { motion } from "framer-motion";
 import Editor from "@monaco-editor/react";
 import "./editor.css";
 
@@ -122,31 +35,54 @@ const CodeEditor = ({
   };
 
   return (
-    <div
+    <motion.div
       className={`editor-container ${
         theme === "vs-dark" ? "dark" : theme === "vs" ? "light" : "contrast"
       }`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <div className={`editor-header ${theme}`}>
+      <motion.div
+        className={`editor-header ${theme}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.3 }}
+      >
         <h3>
           {language} {version}
         </h3>
         <div className="editor-actions">
           {selectedActions.includes("clear") && (
-            <button onClick={onClear} className="action-button clear-button">
+            <motion.button
+              onClick={onClear}
+              className="action-button clear-button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <span className="button-icon">🧹</span>
               <span className="button-text">Clear</span>
-            </button>
+            </motion.button>
           )}
           {selectedActions.includes("save") && (
-            <button onClick={onSave} className="action-button save-button">
+            <motion.button
+              onClick={onSave}
+              className="action-button save-button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <span className="button-icon">💾</span>
               <span className="button-text">Save</span>
-            </button>
+            </motion.button>
           )}
         </div>
-      </div>
-      <div className="editor-content">
+      </motion.div>
+      <motion.div
+        className="editor-content"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.3 }}
+      >
         <Editor
           height="100%"
           language={language}
@@ -168,8 +104,8 @@ const CodeEditor = ({
             snippetSuggestions: readOnly ? "none" : "inline",
           }}
         />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -1,41 +1,5 @@
-// import React, { useState } from 'react';
-// import './output.css'; // Create this if not already
-
-// const Output = ({ output, onClear, theme,selectedActions }) => {
-//   const [copy, setCopy] = useState('copy');
-
-//   const handleCopyOutput = () => {
-//     navigator.clipboard.writeText(output || '');
-//   };
-//   return (
-//     <div className={`output-container ${theme === 'vs-dark' ? 'dark-output' : theme=='vs' ? 'light-output' : 'contrast-output'}`}>
-//       <div className={`output-header ${theme}`}>
-//         <h3>Output</h3>
-//         <div className="output-actions">
-//           {selectedActions.includes('copy') && (
-//             <button onClick={handleCopyOutput} className="action-button">
-//               📋 Copy Output
-//             </button>
-//           )}
-//           {selectedActions.includes('clearOutput') && (
-//             <button onClick={onClear} className="action-button">
-//               🚮 Clear Output
-//             </button>
-//           )}
-//         </div>
-//       </div>
-
-//       <pre className={`output-content ${theme === 'vs-dark' ? 'dark' : 'light'}`}>
-//         {output || 'Output will appear here...'}
-//       </pre>
-//     </div>
-//   );
-// };
-
-// export default Output;
-
-
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import './output.css';
 
 const Output = ({ output, onClear, theme, selectedActions }) => {
@@ -48,29 +12,53 @@ const Output = ({ output, onClear, theme, selectedActions }) => {
   };
 
   return (
-    <div className={`output-container ${theme === 'vs-dark' ? 'dark-output' : theme=='vs' ? 'light-output' : 'contrast-output'}`}>
-      <div className={`output-header ${theme}`}>
+    <motion.div
+      className={`output-container ${theme === 'vs-dark' ? 'dark-output' : theme === 'vs' ? 'light-output' : 'contrast-output'}`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className={`output-header ${theme}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.3 }}
+      >
         <h3>Output</h3>
         <div className="output-actions">
           {selectedActions.includes('copy') && (
-            <button onClick={handleCopyOutput} className="action-button copy-button">
+            <motion.button
+              onClick={handleCopyOutput}
+              className="action-button copy-button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <span className="button-icon">📋</span>
               <span className="button-text">{copy}</span>
-            </button>
+            </motion.button>
           )}
           {selectedActions.includes('clearOutput') && (
-            <button onClick={onClear} className="action-button clear-output-button">
+            <motion.button
+              onClick={onClear}
+              className="action-button clear-output-button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <span className="button-icon">🚮</span>
               <span className="button-text">Clear Output</span>
-            </button>
+            </motion.button>
           )}
         </div>
-      </div>
-
-      <pre className={`output-content ${theme === 'vs-dark' ? 'dark' : 'light'}`}>
+      </motion.div>
+      <motion.pre
+        className={`output-content ${theme === 'vs-dark' ? 'dark' : 'light'}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.3 }}
+      >
         {output || 'Output will appear here...'}
-      </pre>
-    </div>
+      </motion.pre>
+    </motion.div>
   );
 };
 

@@ -1,5 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './customAlert.css';
 
 const CustomAlert = ({ messages, duration = 3000, onClose }) => {
@@ -34,18 +34,29 @@ const CustomAlert = ({ messages, duration = 3000, onClose }) => {
 
   return (
     <div className="alert-container">
-      {alerts.map((message, index) => (
-        <div
-          key={index}
-          className={`custom-alert show alert-${message.type || 'info'}`}
-          style={{ top: `${20 + index * 60}px` }} // Stack alerts vertically
-        >
-          <span className="alert-message">{message.text}</span>
-          <button className="close-button" onClick={() => handleClose(index)}>
-            ✕
-          </button>
-        </div>
-      ))}
+      <AnimatePresence>
+        {alerts.map((message, index) => (
+          <motion.div
+            key={index}
+            className={`custom-alert alert-${message.type || 'info'}`}
+            initial={{ x: '100%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            style={{ top: `${20 + index * 60}px` }} // Stack alerts vertically
+          >
+            <span className="alert-message">{message.text}</span>
+            <motion.button
+              className="close-button"
+              onClick={() => handleClose(index)}
+              whileHover={{ scale: 1.1, color: '#e0e0e0' }}
+              whileTap={{ scale: 0.9 }}
+            >
+              ✕
+            </motion.button>
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 };
