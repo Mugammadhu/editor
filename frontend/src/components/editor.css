@@ -77,18 +77,21 @@
 }
 
 /* Save Button */
-.editor-actions button:not(.clear-btn) {
-  background-color: #27ae60;
+.save-button {
+  background-color: #4caf50 !important;
+}
+
+.save-button:hover {
+  background-color: #3e8e40 !important;
 }
 
 /* Clear Button */
-.clear-btn {
-  background-color: #e74c3c;
+.clear-button {
+  background-color: #ef4444;
 }
 
-/* Hover States */
-.editor-actions button:hover {
-  background-color: #f39c12 !important;
+.clear-button:hover {
+  background-color: #dc2626;
 }
 
 /* Editor Content Area */

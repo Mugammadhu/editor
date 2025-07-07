@@ -16,42 +16,51 @@
   color: #f5f5f5;
 }
 
+.output-container.contrast {
+  background-color: #1e1e1e;
+  color: #f5f5f5;
+}
+
 .output-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.output-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
 .output-actions button {
-  margin-left: 0.5rem;
-  padding: 0.43rem 1.4rem;
+  padding: 0.3rem 0.8rem;
   font-size: 0.85rem;
-  cursor: pointer;
-}
-/* Clear buttons */
-.clear-button {
-  padding: 0.3rem 0.8rem;
-  background-color: #e74c3c;
-  color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  color: #fff;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-
-/* Copy button */
+/* Copy Button */
 .copy-button {
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 0.3rem 0.8rem;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 0.85;
+  background-color: #007acc;
 }
 
-.copy-button:hover,.clear-button:hover {
-  background: #f39c12;
+.copy-button:hover {
+  background-color: #0062a3;
+}
+
+/* Clear Output Button */
+.clear-output-button {
+  background-color: #ef4444;
+}
+
+.clear-output-button:hover {
+  background-color: #dc2626;
 }
 
 .output-content {
@@ -86,6 +95,7 @@
   font-size: 0.8rem;
   color: inherit;
 }
+
 .resize-handle {
   display: flex;
   justify-content: center;
@@ -101,7 +111,7 @@
 }
 
 .resize-handle.vs {
-  background-color:  #444;
+  background-color: #444;
 }
 
 .resize-handle.vs-dark {
@@ -112,10 +122,9 @@
   background-color: yellow;
 }
 
-.layout-select{
-margin-left: 13px;
+.layout-select {
+  margin-left: 13px;
 }
-
 
 .light-output {
   background-color: #f5f5f5;
