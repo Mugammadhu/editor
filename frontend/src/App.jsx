@@ -277,132 +277,70 @@ const App = () => {
   };
 
   //submit function
-const handleFinalSubmit = async () => {
-  try {
-    // Debug: Log submission data
-    console.log("Submitting data:", {
-      question: receivedQuestion,
-      language,
-      code: code.length > 100 ? `${code.substring(0, 100)}...` : code, // Show preview of code
-    });
-
-    // Validate data more thoroughly
-    if (!receivedQuestion?.trim()) {
-      throw new Error("Question is required");
-    }
-    if (!language) {
-      throw new Error("Language is required");
-    }
-    if (!code?.trim()) {
-      throw new Error("Code cannot be empty");
-    }
-
-    // Debug: Log backend URL being used
-    console.log("Using backend URL:", import.meta.env.VITE_BACKEND_URL);
-
-    // Save submission to MongoDB
-    const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
-      {
-        question: receivedQuestion.trim(),
+  const handleFinalSubmit = async () => {
+    try {
+      // Log data being sent
+      console.log("Submitting data:", {
+        question: receivedQuestion,
         language,
-        code: code.trim(),
-      },
-      {
-        timeout: 10000, // 10 second timeout
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        code,
+      });
+
+      // Validate data
+      if (!receivedQuestion || !language || !code) {
+        setAlertMessages((prev) => [
+          { text: "Error: Language and code are required", type: "error" },
+          ...prev,
+        ]);
+        console.error("Validation failed:", {
+          question: receivedQuestion,
+          language,
+          code,
+        });
+        return;
       }
-    );
 
-    // Debug: Log the response
-    console.log("Submission response:", response.data);
-
-    if (!response.data?.id) {
-      throw new Error("Invalid response from server - missing submission ID");
-    }
-
-    // Determine parent origin with fallbacks
-    let parentOrigin;
-    try {
-      parentOrigin = new URL(import.meta.env.VITE_PARENT_APP).origin;
-      console.log("Using configured parent origin:", parentOrigin);
-    } catch (e) {
-      console.warn("Invalid VITE_PARENT_APP, falling back to referrer");
-      parentOrigin = document.referrer 
-        ? new URL(document.referrer).origin 
-        : window.location.origin;
-    }
-
-    // Debug: Log where we're sending the message
-    console.log("Attempting to postMessage to:", parentOrigin);
-
-    // Send message to parent
-    window.parent.postMessage(
-      {
-        type: "SUBMIT",
-        payload: { 
-          submissionId: response.data.id,
-          timestamp: new Date().toISOString(),
+      // Save submission to MongoDB
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
+        {
+          question: receivedQuestion,
+          language,
+          code,
         }
-      },
-      parentOrigin
-    );
+      );
 
-    // Fallback for same-origin scenario
-    if (window.location.origin === parentOrigin) {
-      console.log("Same origin detected, navigating directly");
-      window.location.href = `/preview/${response.data.id}`;
-    }
-
-    // Success handling
-    setAlertMessages((prev) => [
-      { 
-        text: "Code submitted successfully! Redirecting...", 
-        type: "success",
-        persist: true // Optional: keep this message visible longer
-      },
-      ...prev,
-    ]);
-    
-    setShowConfirm(false);
-
-  } catch (error) {
-    // Enhanced error handling
-    const errorMessage = error.response?.data?.error || 
-                        error.message || 
-                        "Unknown submission error";
-    
-    console.error("Submission failed:", {
-      error: errorMessage,
-      stack: error.stack,
-      response: error.response?.data,
-    });
-
-    setAlertMessages((prev) => [
-      {
-        text: `Submission failed: ${errorMessage}`,
-        type: "error",
-        persist: true
-      },
-      ...prev,
-    ]);
-
-    // Optional: Send error message to parent for unified error handling
-    try {
+      // Send message to parent to redirect to preview page with submission ID
       window.parent.postMessage(
         {
-          type: "SUBMIT_ERROR",
-          payload: { error: errorMessage }
+          type: "SUBMIT",
+          payload: { submissionId: response.data.id },
         },
-        parentOrigin || "*" // Fallback to any origin if parentOrigin not set
+        import.meta.env.VITE_PARENT_APP // Ensure this matches parent app origin
       );
-    } catch (postError) {
-      console.error("Failed to send error to parent:", postError);
+
+      setAlertMessages((prev) => [
+        { text: "Code submitted successfully!", type: "success" },
+        ...prev,
+      ]);
+      setShowConfirm(false);
+    } catch (error) {
+      setAlertMessages((prev) => [
+        {
+          text: `Failed to submit code: ${
+            error.response?.data?.error || error.message
+          }`,
+          type: "error",
+        },
+        ...prev,
+      ]);
+      console.error("Submission error:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
     }
-  }
-};
+  };
 
   return (
     <div className="app">
