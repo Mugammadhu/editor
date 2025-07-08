@@ -1,6 +1,7 @@
 /* Base Output Container */
 .output-container {
   height: 100%;
+  width: 100%;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -11,20 +12,21 @@
   z-index: 1200;
 }
 
-/* Theme Variations for Container */
-.output-container.light {
-  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+/* Theme Variations */
+.output-container.light-theme {
+  background: #ffffff;
   color: #1e1e1e;
 }
 
-.output-container.dark {
-  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
-  color: #f5f5f5;
+.output-container.dark-theme {
+  background: #1e1e1e;
+  color: #ffffff;
 }
 
-.output-container.contrast {
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-  color: #f5f5f5;
+.output-container.contrast-theme {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #fff;
 }
 
 /* Output Header */
@@ -36,6 +38,25 @@
   border-bottom: 1px solid;
   border-radius: 8px 8px 0 0;
   transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.output-header.light-theme {
+  background-color: #f3f3f3;
+  color: #1e1e1e;
+  border-color: #e0e0e0;
+}
+
+.output-header.dark-theme {
+  background-color: #252526;
+  color: #ffffff;
+  border-color: #333;
+}
+
+.output-header.contrast-theme {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #fff;
 }
 
 .output-header h3 {
@@ -46,43 +67,48 @@
   letter-spacing: 0.5px;
 }
 
-/* Theme-specific Header Styles */
-.output-header.vs {
-  background-color: #f3f3f3;
-  color: #1e1e1e;
-  border-color: #e0e0e0;
-}
-
-.output-header.vs-dark {
-  background-color: #1e1e1e;
-  color: #ffffff;
-  border-color: #333;
-}
-
-.output-header.hc-black {
-  background-color: #000000;
-  color: #ffffff;
-  border-color: #fff;
-}
-
 /* Output Actions */
 .output-actions {
   display: flex;
   gap: 0.6rem;
+  flex-shrink: 0;
+  align-items: center;
 }
 
 .output-actions button {
-  padding: 0.3rem 0.8rem;
-  font-size: 0.85rem;
+  padding: 0.3rem 0.8rem; /* Matches CodeEditor padding */
+  font-size: 0.85rem; /* Matches CodeEditor font size */
   border: none;
-  border-radius: 4px;
+  border-radius: 4px; /* Matches CodeEditor border radius */
   cursor: pointer;
-  color: #fff;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.3rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100px; /* Matches CodeEditor default width */
+  min-height: 32px; /* Matches CodeEditor min-height */
+}
+
+/* Button Text and Icon */
+.button-text {
+  display: inline-block;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Button Themes */
+.action-button.light-theme {
+  color: #ffffff;
+}
+
+.action-button.dark-theme {
+  color: #ffffff;
+}
+
+.action-button.contrast-theme {
+  color: #ffffff;
+  border: 1px solid #fff;
 }
 
 /* Copy Button */
@@ -92,7 +118,6 @@
 
 .copy-button:hover {
   background-color: #0062a3;
-  transform: translateY(-1px);
 }
 
 /* Clear Output Button */
@@ -102,7 +127,6 @@
 
 .clear-output-button:hover {
   background-color: #dc2626;
-  transform: translateY(-1px);
 }
 
 /* Output Content Area */
@@ -113,65 +137,27 @@
   font-family: monospace;
   flex-grow: 1;
   overflow: auto;
-  background: rgba(255, 255, 255, 0.05);
   padding: 1rem;
   border-radius: 0 0 8px 8px;
   transition: opacity 0.3s ease;
+  min-height: 100px;
+  line-height: 1.5;
 }
 
-/* Theme-specific Content Styles */
-.output-content.light {
+.output-content.light-theme {
+  background: #ffffff;
   color: #1e1e1e;
 }
 
-.output-content.dark {
-  color: #f5f5f5;
+.output-content.dark-theme {
+  background: #1e1e1e;
+  color: #ffffff;
 }
 
-/* Resize Bar Theme */
-.resize-handle {
-  width: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: col-resize;
-  transition: background-color 0.2s ease;
-  border-radius: 4px;
-}
-
-.resize-handle.light {
-  background-color: #e0e0e0;
-}
-
-.resize-handle.dark {
-  background-color: #333;
-}
-
-.resize-icon {
-  font-size: 0.8rem;
-  color: inherit;
-}
-
-.vertical .resize-handle {
-  height: 8px;
-  width: 100%;
-  cursor: row-resize;
-}
-
-.resize-handle.vs {
-  background-color: #444;
-}
-
-.resize-handle.vs-dark {
-  background-color: #ccc;
-}
-
-.resize-handle.hc-black {
-  background-color: yellow;
-}
-
-.layout-select {
-  margin-left: 13px;
+.output-content.contrast-theme {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #fff;
 }
 
 /* Responsive Styles */
@@ -183,20 +169,65 @@
   .output-header {
     padding: 0.4rem 0.8rem;
     flex-direction: column;
+    align-items: flex-start;
     gap: 0.5rem;
   }
 
+  .output-header h3 {
+    margin-bottom: 0.5rem;
+    max-width: 100%;
+  }
+
   .output-actions {
-    width: 100%;
-    justify-content: center;
+    gap: 0.5rem; /* Reduce gap on mobile */
   }
 
   .output-actions button {
-    width: 100%;
-    justify-content: center;
+    width: 90px; /* Matches CodeEditor mobile width */
+    font-size: 0.8rem; /* Matches CodeEditor mobile font size */
+    padding: 0.3rem 0.5rem; /* Matches CodeEditor mobile padding */
   }
 
-  .output-content {
-    padding: 0.5rem;
+  .button-text {
+    font-size: 0.8rem; /* Matches CodeEditor mobile text size */
   }
+}
+
+@media (max-width: 480px) {
+  .output-header h3 {
+    font-size: 0.9rem;
+  }
+
+  .output-actions button {
+    width: 80px; /* Matches CodeEditor smaller screen width */
+    font-size: 0.75rem; /* Matches CodeEditor smaller screen font size */
+    padding: 0.2rem 0.4rem; /* Matches CodeEditor smaller screen padding */
+  }
+
+  .button-text {
+    font-size: 0.75rem; /* Matches CodeEditor smaller screen text size */
+  }
+  .output-header{
+        margin-top: -19px;
+    margin-left: -10px;
+    width: 200px;
+  }
+}
+
+@media (max-width: 360px) {
+  .output-actions button {
+    width: 70px; /* Matches CodeEditor very small screen width */
+    font-size: 0.7rem; /* Matches CodeEditor very small screen font size */
+    padding: 0.2rem 0.3rem; /* Matches CodeEditor very small screen padding */
+  }
+
+  .button-text {
+    font-size: 0.7rem; /* Matches CodeEditor very small screen text size */
+  }
+}
+
+/* Accessibility improvements */
+.action-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import pythonIcon from "../assets/icons/python.svg";
 import javascriptIcon from "../assets/icons/javascript.svg";
@@ -76,11 +76,11 @@ const layoutOptions = [
 ];
 
 const actionOptions = [
-  { value: "save", label: "Save Code", icon: "💾", bgcolor: "#4caf50" },
-  { value: "clear", label: "Clear Code", icon: "🧹", bgcolor: "#ef4444" },
-  { value: "clearOutput", label: "Clear Output", icon: "🚮", bgcolor: "#ef4444" },
-  { value: "copy", label: "Copy Output", icon: "📋", bgcolor: "#007acc" },
-  { value: "download", label: "Download Code", icon: "⤵️", bgcolor: "#007acc" },
+  { value: "save", label: "Save Code", bgcolor: "#4caf50" },
+  { value: "clear", label: "Clear Code", bgcolor: "#ef4444" },
+  { value: "clearOutput", label: "Clear Output", bgcolor: "#ef4444" },
+  { value: "copy", label: "Copy Output", bgcolor: "#007acc" },
+  { value: "download", label: "Download Code", bgcolor: "#007acc" },
 ];
 
 const Controls = ({
@@ -101,19 +101,45 @@ const Controls = ({
   setSelectedActions,
 }) => {
   const [showActionPopup, setShowActionPopup] = useState(false);
-  const currentLangIcon = languageOptions.find(
-    (l) => l.value === language
-  )?.icon;
-  const currentThemeIcon = themeOptions.find((t) => t.value === theme)?.icon;
-  const currentLayoutIcon = layoutOptions.find((l) => l.value === layout)?.icon;
+  const [deviceType, setDeviceType] = useState("desktop");
   const [tempSelectedActions, setTempSelectedActions] = useState(selectedActions);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const popupRef = useRef();
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width <= 640) {
+        setDeviceType("mobile");
+      } else if (width <= 1024) {
+        setDeviceType("tablet");
+      } else {
+        setDeviceType("desktop");
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowActionPopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const toggleAction = (action) => {
-    if (tempSelectedActions.includes(action)) {
-      setTempSelectedActions(tempSelectedActions.filter((a) => a !== action));
-    } else {
-      setTempSelectedActions([...tempSelectedActions, action]);
-    }
+    setTempSelectedActions((prev) =>
+      prev.includes(action)
+        ? prev.filter((a) => a !== action)
+        : [...prev, action]
+    );
   };
 
   const handleApply = () => {
@@ -121,15 +147,16 @@ const Controls = ({
     setShowActionPopup(false);
   };
 
-  return (
-    <motion.div
-      className={`controls ${theme === "vs-dark" ? "dark-mode" : ""}`}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="control-group language-select">
-        <div className="icon-wrapper">
+  const currentLangIcon = languageOptions.find((l) => l.value === language)?.icon;
+  const currentThemeIcon = themeOptions.find((t) => t.value === theme)?.icon;
+  const currentLayoutIcon = layoutOptions.find((l) => l.value === layout)?.icon;
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const renderDesktopControls = () => (
+    <div className="control_main">
+      <div className="control-group language-select ">
+        <div className="icon-wrapper ">
           <img src={currentLangIcon} alt="Language" className="icon" />
           {isLanguageLocked ? (
             <div className="locked-language">
@@ -141,7 +168,7 @@ const Controls = ({
               value={language}
               onChange={(e) => onLanguageChange(e.target.value)}
               disabled={!isEditable}
-              className="styled-select"
+              className="styled-select "
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -155,7 +182,7 @@ const Controls = ({
         </div>
       </div>
 
-      <div className="control-group theme-select">
+      <div className="control-group theme-select ">
         <div className="icon-wrapper">
           <img src={currentThemeIcon} alt="Theme" className="icon" />
           <motion.select
@@ -174,11 +201,9 @@ const Controls = ({
         </div>
       </div>
 
-      <div className="control-group layout-select layout">
+      <div className="control-group layout-select ">
         <div className="icon-wrapper">
-          <div className="icon-container">
-            <img src={currentLayoutIcon} alt="Layout" className="icon" />
-          </div>
+          <img src={currentLayoutIcon} alt="Layout" className="icon" />
           <motion.select
             value={layout}
             onChange={(e) => onLayoutChange(e.target.value)}
@@ -193,75 +218,242 @@ const Controls = ({
             ))}
           </motion.select>
         </div>
-
-        <div className="action-select-container options">
-          <motion.button
-            className="action-select-button"
-            onClick={() => setShowActionPopup(!showActionPopup)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            ⚙️ Select Actions
-          </motion.button>
-
-          <AnimatePresence>
-            {showActionPopup && (
-              <motion.div
-                className={`action-popup ${theme === "vs-dark" ? "dark" : ""}`}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="action-popup-header">
-                  <h4>Select Actions to Show</h4>
-                  <motion.button
-                    className="close-popup"
-                    onClick={() => setShowActionPopup(false)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    ×
-                  </motion.button>
-                </div>
-                <div className="action-options">
-                  {actionOptions.map((option) => (
-                    <motion.div
-                      key={option.value}
-                      className={`action-option ${tempSelectedActions.includes(option.value) ? 'selected' : ''}`}
-                      onClick={() => toggleAction(option.value)}
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <div className="radio-toggle">
-                        <input
-                          type="checkbox"
-                          checked={tempSelectedActions.includes(option.value)}
-                          onChange={() => toggleAction(option.value)}
-                        />
-                        <span className="radio-slider"></span>
-                      </div>
-                      <span className="action-option-content">
-                        <span className="action-icon" style={{ color: option.bgcolor }}>{option.icon}</span>
-                        <span className="action-label">{option.label}</span>
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
-                <motion.button
-                  className="apply-actions-button"
-                  onClick={handleApply}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Apply
-                </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
       </div>
 
-      <div className="action-buttons">
+      <div className="action-select-container " ref={popupRef}>
+        <motion.button
+          className="action-select-button"
+          onClick={() => setShowActionPopup(!showActionPopup)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Select Actions
+        </motion.button>
+
+        <AnimatePresence>
+          {showActionPopup && (
+            <motion.div
+              className={`action-popup ${theme === "vs-dark" ? "dark" : ""}`}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="action-popup-header">
+                <h4>Select Actions to Show</h4>
+                <motion.button
+                  className="close-popup"
+                  onClick={() => setShowActionPopup(false)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  ×
+                </motion.button>
+              </div>
+              <div className="action-options">
+                {actionOptions.map((option) => (
+                  <motion.div
+                    key={option.value}
+                    className={`action-option ${
+                      tempSelectedActions.includes(option.value) ? "selected" : ""
+                    }`}
+                    onClick={() => toggleAction(option.value)}
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    <div className="radio-toggle">
+                      <input
+                        type="checkbox"
+                        checked={tempSelectedActions.includes(option.value)}
+                        readOnly
+                      />
+                      <span className="radio-slider"></span>
+                    </div>
+                    <span className="action-label">{option.label}</span>
+                  </motion.div>
+                ))}
+              </div>
+              <motion.button
+                className="apply-actions-button"
+                onClick={handleApply}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Apply
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+
+  const renderMobileControls = () => (
+    <>
+      <motion.button
+        className="mobile-menu-button"
+        onClick={toggleMenu}
+        whileTap={{ scale: 0.95 }}
+      >
+        <span className="mobile-menu-button-content">
+          {isMenuOpen ? "✕ Close" : "☰ Menu"}
+        </span>
+      </motion.button>
+
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            className="mobile-menu"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="mobile-control-group">
+              <label>Language</label>
+              <div className="icon-wrapper">
+                <img src={currentLangIcon} alt="Language" className="icon" />
+                {isLanguageLocked ? (
+                  <div className="locked-language">
+                    <strong>{(lockedLanguage || language).toUpperCase()}</strong>
+                    <span className="lock-icon">🔒</span>
+                  </div>
+                ) : (
+                  <select
+                    value={language}
+                    onChange={(e) => onLanguageChange(e.target.value)}
+                    disabled={!isEditable}
+                    className="styled-select"
+                  >
+                    {languageOptions.map(({ value, label }) => (
+                      <option key={`lang-${value}`} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
+
+            <div className="mobile-control-group">
+              <label>Theme</label>
+              <div className="icon-wrapper">
+                <img src={currentThemeIcon} alt="Theme" className="icon" />
+                <select
+                  value={theme}
+                  onChange={(e) => onThemeChange(e.target.value)}
+                  className="styled-select"
+                >
+                  {themeOptions.map(({ value, label }) => (
+                    <option key={`theme-${value}`} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mobile-control-group">
+              <label>Layout</label>
+              <div className="icon-wrapper">
+                <img src={currentLayoutIcon} alt="Layout" className="icon" />
+                <select
+                  value={layout}
+                  onChange={(e) => onLayoutChange(e.target.value)}
+                  className="styled-select"
+                >
+                  {layoutOptions.map(({ value, label }) => (
+                    <option key={`layout-${value}`} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mobile-control-group">
+              <label>Actions</label>
+              <button
+                className="mobile-action-button"
+                onClick={() => {
+                  setShowActionPopup(true);
+                  setIsMenuOpen(false);
+                }}
+              >
+                Select Actions
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showActionPopup && (
+          <motion.div
+            className="mobile-action-popup"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            ref={popupRef}
+          >
+            <div className="mobile-popup-header">
+              <h4>Select Actions</h4>
+              <button
+                className="close-popup"
+                onClick={() => setShowActionPopup(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="mobile-action-options">
+              {actionOptions.map((option) => (
+                <div
+                  key={option.value}
+                  className={`mobile-action-option ${
+                    tempSelectedActions.includes(option.value) ? "selected" : ""
+                  }`}
+                  onClick={() => toggleAction(option.value)}
+                >
+                  <div className="mobile-radio-toggle">
+                    <input
+                      type="checkbox"
+                      checked={tempSelectedActions.includes(option.value)}
+                      readOnly
+                    />
+                    <span className="mobile-radio-slider"></span>
+                  </div>
+                  <span className="mobile-action-label">{option.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mobile-popup-footer">
+              <button
+                className="mobile-cancel-button"
+                onClick={() => setShowActionPopup(false)}
+              >
+                Cancel
+              </button>
+              <button className="mobile-apply-button" onClick={handleApply}>
+                Apply
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+
+  return (
+    <motion.div
+      className={`controls ${theme === "vs-dark" ? "dark-mode" : ""} ${
+        deviceType === "mobile" ? "mobile" : deviceType === "tablet" ? "tablet" : ""
+      }`}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {deviceType === "mobile" ? renderMobileControls() : renderDesktopControls()}
+
+      <div className={`action-buttons ${deviceType}`}>
         <motion.button
           className={`run-button ${isRunning ? "running" : ""}`}
           onClick={onRun}
@@ -271,21 +463,21 @@ const Controls = ({
           whileTap={{ scale: isRunning || !isEditable ? 1 : 0.95 }}
         >
           <span className="button-icon">▶️</span>
-          <span className="button-text">
-            {isRunning ? "Running..." : "Run Code"}
-          </span>
+          <span className="button-text">Run Code</span>
         </motion.button>
+
         {selectedActions.includes("download") && (
           <motion.button
             onClick={handleDownloadCode}
-            className="action-button download-button"
+            className="run-button download-button" /* Removed redundant run-button */
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="button-icon">⤵️</span>
+            <span className="button-icon">📥</span>
             <span className="button-text">Download</span>
           </motion.button>
         )}
+
         <motion.button
           className="submit-button"
           onClick={() => setShowConfirm(true)}
@@ -294,7 +486,7 @@ const Controls = ({
           whileHover={{ scale: isEditable ? 1.05 : 1 }}
           whileTap={{ scale: isEditable ? 0.95 : 1 }}
         >
-          <span className="button-icon">🚀</span>
+          <span className="button-icon">📤</span>
           <span className="button-text">Submit</span>
         </motion.button>
       </div>

@@ -26,9 +26,7 @@ const CodeEditor = ({
       });
 
       editor.onContextMenu((e) => {
-        const pasteAction = editor.getAction(
-          "editor.action.clipboardPasteAction"
-        );
+        const pasteAction = editor.getAction("editor.action.clipboardPasteAction");
         if (pasteAction) pasteAction.disabled = true;
       });
     }
@@ -59,8 +57,9 @@ const CodeEditor = ({
               className="action-button clear-button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              aria-label="Clear code"
             >
-              <span className="button-icon">🧹</span>
+              {window.innerWidth > 768 && <span className="button-icon">🧹</span>}
               <span className="button-text">Clear</span>
             </motion.button>
           )}
@@ -70,8 +69,9 @@ const CodeEditor = ({
               className="action-button save-button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              aria-label="Save code"
             >
-              <span className="button-icon">💾</span>
+              {window.innerWidth > 768 && <span className="button-icon">💾</span>}
               <span className="button-text">Save</span>
             </motion.button>
           )}
@@ -102,6 +102,7 @@ const CodeEditor = ({
             suggestOnTriggerCharacters: !readOnly,
             acceptSuggestionOnEnter: readOnly ? "off" : "on",
             snippetSuggestions: readOnly ? "none" : "inline",
+            accessibilitySupport: "on",
           }}
         />
       </motion.div>

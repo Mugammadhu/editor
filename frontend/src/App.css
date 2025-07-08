@@ -184,31 +184,12 @@ select {
   cursor: not-allowed;
 }
 
-
-/* Download Button */
-.download-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+button span.button-text {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.download-button:hover {
-  background-color: #45a049;
-}
-
-.download-button:disabled {
-  background-color: #a5d6a7;
-  cursor: not-allowed;
-}
 
 /* Resize handle */
 .resize-handle {
@@ -322,7 +303,7 @@ select {
 
 [data-panel-collapsed] .input-container textarea {
   min-height: 30px;
-}
+ } 
 
 
 
