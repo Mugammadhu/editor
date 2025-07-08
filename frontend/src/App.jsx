@@ -134,13 +134,16 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [code, language]);
 
-
   // Handle messages from parent
   useEffect(() => {
     const handleMessage = (event) => {
-      const expectedOrigin = import.meta.env.VITE_PARENT_APP;
+      const allowedOrigins = [
+        import.meta.env.VITE_PARENT_APP,
+        "http://localhost:5173", // For local development
+        "https://digi-exams.netlify.app",
+      ];
 
-      if (event.origin !== expectedOrigin) return;
+      if (!allowedOrigins.includes(event.origin)) return;
 
       if (event.data?.type === "INIT") {
         const { question, language: parentLanguage } = event.data.payload || {};
@@ -309,6 +312,12 @@ const App = () => {
           code,
         }
       );
+
+      //testing
+      console.log("Attempting to post message to parent:", {
+        targetOrigin: import.meta.env.VITE_PARENT_APP,
+        parentWindow: window.parent,
+      });
 
       // Send message to parent to redirect to preview page with submission ID
       window.parent.postMessage(
