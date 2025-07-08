@@ -100,6 +100,7 @@ const App = () => {
   const [isEditable, setIsEditable] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [selectedActions, setSelectedActions] = useState([]);
+  const [status,setStatus]=useState();
   useEffect(() => {
     localStorage.setItem("language", language);
     // Load code when language changes
