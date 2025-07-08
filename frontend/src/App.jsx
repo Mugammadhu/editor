@@ -108,7 +108,6 @@ const App = () => {
     setCode(unsavedCode || savedCode || BOILERPLATES[language] || "");
   }, [language]);
 
-
   useEffect(() => {
     localStorage.setItem("theme", theme);
   }, [theme]);
@@ -135,12 +134,13 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [code, language]);
 
+
   // Handle messages from parent
   useEffect(() => {
     const handleMessage = (event) => {
-    const expectedOrigin = import.meta.env.VITE_PARENT_APP;
+      const expectedOrigin = import.meta.env.VITE_PARENT_APP;
 
-    if (event.origin !== expectedOrigin) return;
+      if (event.origin !== expectedOrigin) return;
 
       if (event.data?.type === "INIT") {
         const { question, language: parentLanguage } = event.data.payload || {};
