@@ -108,6 +108,7 @@ const App = () => {
     setCode(unsavedCode || savedCode || BOILERPLATES[language] || "");
   }, [language]);
 
+
   useEffect(() => {
     localStorage.setItem("theme", theme);
   }, [theme]);
@@ -137,7 +138,9 @@ const App = () => {
   // Handle messages from parent
   useEffect(() => {
     const handleMessage = (event) => {
-      if (!event.origin.includes("localhost")) return;
+    const expectedOrigin = import.meta.env.VITE_PARENT_APP;
+
+    if (event.origin !== expectedOrigin) return;
 
       if (event.data?.type === "INIT") {
         const { question, language: parentLanguage } = event.data.payload || {};
@@ -211,14 +214,11 @@ const App = () => {
     setOutput("Running...");
 
     try {
-      const response = await axios.post(
-        "https://emkc.org/api/v2/piston/execute",
-        {
-          language,
-          version: LANGUAGE_VERSIONS[language] || "latest",
-          files: [{ content: code }],
-        }
-      );
+      const response = await axios.post(import.meta.env.VITE_PISTON_API, {
+        language,
+        version: LANGUAGE_VERSIONS[language] || "latest",
+        files: [{ content: code }],
+      });
 
       setOutput(response.data.run.output || "No output");
     } catch (error) {
@@ -302,7 +302,7 @@ const App = () => {
 
       // Save submission to MongoDB
       const response = await axios.post(
-        "http://localhost:5000/api/submissions",
+        `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
         {
           question: receivedQuestion,
           language,
@@ -316,7 +316,7 @@ const App = () => {
           type: "SUBMIT",
           payload: { submissionId: response.data.id },
         },
-        "http://localhost:5174" // Ensure this matches parent app origin
+        import.meta.env.VITE_PARENT_APP // Ensure this matches parent app origin
       );
 
       setAlertMessages((prev) => [
@@ -369,7 +369,6 @@ const App = () => {
         handleDownloadCode={handleDownloadCode}
         selectedActions={selectedActions}
         setSelectedActions={setSelectedActions}
-
       />
 
       <PanelGroup
@@ -386,7 +385,7 @@ const App = () => {
             onSave={handleSaveCode}
             onClear={handleClearCode}
             readOnly={!isEditable}
-                selectedActions={selectedActions}
+            selectedActions={selectedActions}
           />
         </Panel>
 
@@ -407,7 +406,12 @@ const App = () => {
         </PanelResizeHandle>
 
         <Panel defaultSize={40} minSize={30} className="output-panel">
-          <Output output={output} onClear={handleClearOutput} theme={theme}     selectedActions={selectedActions} />
+          <Output
+            output={output}
+            onClear={handleClearOutput}
+            theme={theme}
+            selectedActions={selectedActions}
+          />
         </Panel>
       </PanelGroup>
 
