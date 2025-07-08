@@ -280,76 +280,113 @@ const App = () => {
   };
 
   //submit function
+  // const handleFinalSubmit = async () => {
+  //   try {
+  //     // Log data being sent
+  //     console.log("Submitting data:", {
+  //       question: receivedQuestion,
+  //       language,
+  //       code,
+  //     });
+
+  //     // Validate data
+  //     if (!receivedQuestion || !language || !code) {
+  //       setAlertMessages((prev) => [
+  //         { text: "Error: Language and code are required", type: "error" },
+  //         ...prev,
+  //       ]);
+  //       console.error("Validation failed:", {
+  //         question: receivedQuestion,
+  //         language,
+  //         code,
+  //       });
+  //       return;
+  //     }
+
+  //     // Save submission to MongoDB
+  //     const response = await axios.post(
+  //       `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
+  //       {
+  //         question: receivedQuestion,
+  //         language,
+  //         code,
+  //       }
+  //     );
+
+  //     //testing
+  //     console.log("Attempting to post message to parent:", {
+  //       targetOrigin: import.meta.env.VITE_PARENT_APP,
+  //       parentWindow: window.parent,
+  //     });
+
+  //     // Send message to parent to redirect to preview page with submission ID
+  //     window.parent.postMessage(
+  //       {
+  //         type: "SUBMIT",
+  //         payload: { submissionId: response.data.id },
+  //       },
+  //       import.meta.env.VITE_PARENT_APP // Ensure this matches parent app origin
+  //     );
+
+  //     setAlertMessages((prev) => [
+  //       { text: "Code submitted successfully!", type: "success" },
+  //       ...prev,
+  //     ]);
+  //     setShowConfirm(false);
+  //   } catch (error) {
+  //     setAlertMessages((prev) => [
+  //       {
+  //         text: `Failed to submit code: ${
+  //           error.response?.data?.error || error.message
+  //         }`,
+  //         type: "error",
+  //       },
+  //       ...prev,
+  //     ]);
+  //     console.error("Submission error:", {
+  //       message: error.message,
+  //       response: error.response?.data,
+  //       status: error.response?.status,
+  //     });
+  //   }
+  // };
+
   const handleFinalSubmit = async () => {
-    try {
-      // Log data being sent
-      console.log("Submitting data:", {
-        question: receivedQuestion,
-        language,
-        code,
-      });
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
+      { question: receivedQuestion, language, code }
+    );
 
-      // Validate data
-      if (!receivedQuestion || !language || !code) {
-        setAlertMessages((prev) => [
-          { text: "Error: Language and code are required", type: "error" },
-          ...prev,
-        ]);
-        console.error("Validation failed:", {
-          question: receivedQuestion,
-          language,
-          code,
-        });
-        return;
+    // DEBUG: Log the response and parent origin
+    console.log("Submission response:", response.data);
+    console.log("Attempting to post to parent:", import.meta.env.VITE_PARENT_APP);
+    
+    // Send message to parent
+    window.parent.postMessage(
+      {
+        type: "SUBMIT",
+        payload: { submissionId: response.data.id } // Ensure this matches your backend response
+      },
+      import.meta.env.VITE_PARENT_APP
+    );
+
+    // Fallback: If parent doesn't respond within 2 seconds
+    const fallbackTimer = setTimeout(() => {
+      window.location.href = `${import.meta.env.VITE_PARENT_APP}/preview/${response.data.id}`;
+    }, 2000);
+
+    // Clean up timer if message was received
+    window.addEventListener('message', (e) => {
+      if (e.data?.type === 'SUBMIT_ACK') {
+        clearTimeout(fallbackTimer);
       }
+    }, { once: true });
 
-      // Save submission to MongoDB
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
-        {
-          question: receivedQuestion,
-          language,
-          code,
-        }
-      );
-
-      //testing
-      console.log("Attempting to post message to parent:", {
-        targetOrigin: import.meta.env.VITE_PARENT_APP,
-        parentWindow: window.parent,
-      });
-
-      // Send message to parent to redirect to preview page with submission ID
-      window.parent.postMessage(
-        {
-          type: "SUBMIT",
-          payload: { submissionId: response.data.id },
-        },
-        import.meta.env.VITE_PARENT_APP // Ensure this matches parent app origin
-      );
-
-      setAlertMessages((prev) => [
-        { text: "Code submitted successfully!", type: "success" },
-        ...prev,
-      ]);
-      setShowConfirm(false);
-    } catch (error) {
-      setAlertMessages((prev) => [
-        {
-          text: `Failed to submit code: ${
-            error.response?.data?.error || error.message
-          }`,
-          type: "error",
-        },
-        ...prev,
-      ]);
-      console.error("Submission error:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
-    }
-  };
+  } catch (error) {
+    console.error("Submission failed:", error);
+  }
+};
 
   return (
     <div className="app">
