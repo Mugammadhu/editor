@@ -352,39 +352,46 @@ const App = () => {
   // };
 
   const handleFinalSubmit = async () => {
+  setShowConfirm(false);
+  setStatus('pending'); // Set status before request
+
   try {
+    // Add timeout configuration to axios
     const response = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
-      { question: receivedQuestion, language, code }
+      { question: receivedQuestion, language, code },
+      { timeout: 10000 } // 10 second timeout
     );
 
-    // DEBUG: Log the response and parent origin
-    console.log("Submission response:", response.data);
-    console.log("Attempting to post to parent:", import.meta.env.VITE_PARENT_APP);
+    console.log("Submission successful:", response.data);
     
-    // Send message to parent
+    // Attempt to notify parent
     window.parent.postMessage(
       {
         type: "SUBMIT",
-        payload: { submissionId: response.data.id } // Ensure this matches your backend response
+        payload: { submissionId: response.data.id }
       },
       import.meta.env.VITE_PARENT_APP
     );
 
-    // Fallback: If parent doesn't respond within 2 seconds
-    const fallbackTimer = setTimeout(() => {
+    // Fallback direct navigation
+    setTimeout(() => {
       window.location.href = `${import.meta.env.VITE_PARENT_APP}/preview/${response.data.id}`;
     }, 2000);
 
-    // Clean up timer if message was received
-    window.addEventListener('message', (e) => {
-      if (e.data?.type === 'SUBMIT_ACK') {
-        clearTimeout(fallbackTimer);
-      }
-    }, { once: true });
-
   } catch (error) {
-    console.error("Submission failed:", error);
+    console.error("Submission failed:", {
+      message: error.message,
+      code: error.code,
+      config: error.config
+    });
+    
+    setAlertMessages([{
+      text: `Submission failed: ${error.message || 'Network error'}`,
+      type: "error"
+    }]);
+  } finally {
+    setStatus('idle');
   }
 };
 
