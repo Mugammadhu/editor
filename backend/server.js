@@ -11,12 +11,12 @@ const app = express();
 // Middleware
 app.use(
   cors({
-
     origin: [
       "https://digi-exams.netlify.app",
       "https://instantcoder.netlify.app",
-      process.env.PARENT_URI, 
-      process.env.CHILD_URI
+      process.env.PARENT_URI,
+      process.env.CHILD_URI,
+      "http://localhost:5175",
     ], // Allow parent and child origins
   })
 );

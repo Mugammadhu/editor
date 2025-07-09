@@ -160,7 +160,7 @@ const Controls = ({
           <img src={currentLangIcon} alt="Language" className="icon" />
           {isLanguageLocked ? (
             <div className="locked-language">
-              <strong>{(lockedLanguage || language).toUpperCase()}</strong>
+              <strong >{(lockedLanguage || language).toUpperCase()}</strong>
               <span className="lock-icon">🔒</span>
             </div>
           ) : (
@@ -310,7 +310,7 @@ const Controls = ({
           >
             <div className="mobile-control-group">
               <label>Language</label>
-              <div className="icon-wrapper">
+              <div className="icon-wrapper ">
                 <img src={currentLangIcon} alt="Language" className="icon" />
                 {isLanguageLocked ? (
                   <div className="locked-language">
