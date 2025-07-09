@@ -110,6 +110,20 @@ const App = () => {
   }, [language]);
 
   useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth <= 768) {
+      setLayout("horizontal");
+    } else {
+      setLayout("vertical");
+    }
+  };
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
+
+  useEffect(() => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
@@ -280,77 +294,6 @@ const App = () => {
     ]);
   };
 
-  //submit function
-  // const handleFinalSubmit = async () => {
-  //   try {
-  //     // Log data being sent
-  //     console.log("Submitting data:", {
-  //       question: receivedQuestion,
-  //       language,
-  //       code,
-  //     });
-
-  //     // Validate data
-  //     if (!receivedQuestion || !language || !code) {
-  //       setAlertMessages((prev) => [
-  //         { text: "Error: Language and code are required", type: "error" },
-  //         ...prev,
-  //       ]);
-  //       console.error("Validation failed:", {
-  //         question: receivedQuestion,
-  //         language,
-  //         code,
-  //       });
-  //       return;
-  //     }
-
-  //     // Save submission to MongoDB
-  //     const response = await axios.post(
-  //       `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
-  //       {
-  //         question: receivedQuestion,
-  //         language,
-  //         code,
-  //       }
-  //     );
-
-  //     //testing
-  //     console.log("Attempting to post message to parent:", {
-  //       targetOrigin: import.meta.env.VITE_PARENT_APP,
-  //       parentWindow: window.parent,
-  //     });
-
-  //     // Send message to parent to redirect to preview page with submission ID
-  //     window.parent.postMessage(
-  //       {
-  //         type: "SUBMIT",
-  //         payload: { submissionId: response.data.id },
-  //       },
-  //       import.meta.env.VITE_PARENT_APP // Ensure this matches parent app origin
-  //     );
-
-  //     setAlertMessages((prev) => [
-  //       { text: "Code submitted successfully!", type: "success" },
-  //       ...prev,
-  //     ]);
-  //     setShowConfirm(false);
-  //   } catch (error) {
-  //     setAlertMessages((prev) => [
-  //       {
-  //         text: `Failed to submit code: ${
-  //           error.response?.data?.error || error.message
-  //         }`,
-  //         type: "error",
-  //       },
-  //       ...prev,
-  //     ]);
-  //     console.error("Submission error:", {
-  //       message: error.message,
-  //       response: error.response?.data,
-  //       status: error.response?.status,
-  //     });
-  //   }
-  // };
 
   const handleFinalSubmit = async () => {
     setShowConfirm(false);

@@ -210,7 +210,7 @@
   .output-header{
         margin-top: -19px;
     margin-left: -10px;
-    width: 200px;
+    min-width: 200px;
   }
 }
 
