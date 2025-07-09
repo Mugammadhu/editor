@@ -295,52 +295,45 @@ const App = () => {
   };
 
 
-  const handleFinalSubmit = async () => {
-    setShowConfirm(false);
-    setStatus("pending"); // Set status before request
+const handleFinalSubmit = async () => {
+  if (status === "pending") return; // prevent multiple submits
+  setShowConfirm(false);
+  setStatus("pending");
 
-    try {
-      // Add timeout configuration to axios
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
-        { question: receivedQuestion, language, code },
-        { timeout: 10000 } // 10 second timeout
-      );
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/submissions`,
+      { question: receivedQuestion, language, code },
+      { timeout: 10000 }
+    );
 
-      console.log("Submission successful:", response.data);
+    const submissionId = response.data.id;
 
-      // Attempt to notify parent
-      window.parent.postMessage(
-        {
-          type: "SUBMIT",
-          payload: { submissionId: response.data.id },
-        },
-        import.meta.env.VITE_PARENT_APP
-      );
+    // Notify parent app
+    window.parent.postMessage(
+      {
+        type: "SUBMIT",
+        payload: { submissionId },
+      },
+      import.meta.env.VITE_PARENT_APP
+    );
+        setAlertMessages((prev) => [
+      { text: "Code Submitted", type: "success" },
+      ...prev,
+    ]);
 
-      // Fallback direct navigation
-      setTimeout(() => {
-        window.location.href = `${import.meta.env.VITE_PARENT_APP}/preview/${
-          response.data.id
-        }`;
-      }, 2000);
-    } catch (error) {
-      console.error("Submission failed:", {
-        message: error.message,
-        code: error.code,
-        config: error.config,
-      });
+  } catch (error) {
+    setAlertMessages([
+      {
+        text: `Submission failed: ${error.message || "Network error"}`,
+        type: "error",
+      },
+    ]);
+  } finally {
+    setStatus("idle");
+  }
+};
 
-      setAlertMessages([
-        {
-          text: `Submission failed: ${error.message || "Network error"}`,
-          type: "error",
-        },
-      ]);
-    } finally {
-      setStatus("idle");
-    }
-  };
 
   return (
     <div className="app">
