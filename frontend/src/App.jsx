@@ -111,7 +111,7 @@ const App = () => {
 
   useEffect(() => {
   const handleResize = () => {
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= 425) {
       setLayout("horizontal");
     } else {
       setLayout("vertical");
