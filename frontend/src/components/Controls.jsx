@@ -13,7 +13,6 @@ import swiftIcon from "../assets/icons/swift.svg";
 import phpIcon from "../assets/icons/php.svg";
 import ocaml from "../assets/icons/ocaml.svg";
 import vb from "../assets/icons/vb.svg";
-import fsharp from "../assets/icons/fsharp.svg";
 import lua from "../assets/icons/lua.svg";
 import haskell from "../assets/icons/haskell.svg";
 import dart from "../assets/icons/dart.svg";
@@ -25,7 +24,6 @@ import bash from "../assets/icons/bash.svg";
 import r from "../assets/icons/r.svg";
 import scala from "../assets/icons/scala.svg";
 import perl from "../assets/icons/perl.svg";
-import kotlin from "../assets/icons/kotlin.svg";
 import csharp from "../assets/icons/csharp.svg";
 import sunIcon from "../assets/icons/sun.svg";
 import moonIcon from "../assets/icons/moon.svg";
@@ -48,7 +46,6 @@ const languageOptions = [
   { value: "php", label: "PHP", icon: phpIcon },
   { value: "ocaml", label: "OCaml", icon: ocaml },
   { value: "vb", label: "Visual Basic", icon: vb },
-  { value: "fsharp", label: "F#", icon: fsharp },
   { value: "lua", label: "Lua", icon: lua },
   { value: "haskell", label: "Haskell", icon: haskell },
   { value: "dart", label: "Dart", icon: dart },
@@ -60,7 +57,6 @@ const languageOptions = [
   { value: "r", label: "R", icon: r },
   { value: "scala", label: "Scala", icon: scala },
   { value: "perl", label: "Perl", icon: perl },
-  { value: "kotlin", label: "Kotlin", icon: kotlin },
   { value: "csharp", label: "C#", icon: csharp },
 ];
 

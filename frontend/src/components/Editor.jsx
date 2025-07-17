@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import Editor from "@monaco-editor/react";
@@ -17,18 +18,6 @@ const CodeEditor = ({
   const handleEditorDidMount = (editor, monaco) => {
     if (readOnly) {
       editor.updateOptions({ readOnly: true });
-    } else {
-      editor.onKeyDown((e) => {
-        if ((e.ctrlKey || e.metaKey) && e.keyCode === monaco.KeyCode.KeyV) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      });
-
-      editor.onContextMenu((e) => {
-        const pasteAction = editor.getAction("editor.action.clipboardPasteAction");
-        if (pasteAction) pasteAction.disabled = true;
-      });
     }
   };
 

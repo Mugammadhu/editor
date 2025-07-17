@@ -2,60 +2,53 @@
 .output-container {
   height: 100%;
   width: 100%;
-  padding: 1rem;
   display: flex;
   flex-direction: column;
-  overflow: auto;
   border-radius: 8px;
+  overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  z-index: 1200;
 }
 
 /* Theme Variations */
-.output-container.light-theme {
+.light-theme {
   background: #ffffff;
   color: #1e1e1e;
+  border: 1px solid #e0e0e0;
 }
 
-.output-container.dark-theme {
+.dark-theme {
   background: #1e1e1e;
   color: #ffffff;
+  border: 1px solid #333;
 }
 
-.output-container.contrast-theme {
+.contrast-theme {
   background: #000000;
   color: #ffffff;
   border: 1px solid #fff;
 }
 
-/* Output Header */
+/* Header Styles */
 .output-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid;
-  border-radius: 8px 8px 0 0;
-  transition: all 0.2s ease;
-  overflow: hidden;
 }
 
-.output-header.light-theme {
+.light-theme .output-header {
   background-color: #f3f3f3;
-  color: #1e1e1e;
   border-color: #e0e0e0;
 }
 
-.output-header.dark-theme {
+.dark-theme .output-header {
   background-color: #252526;
-  color: #ffffff;
   border-color: #333;
 }
 
-.output-header.contrast-theme {
-  background-color: #000000;
-  color: #ffffff;
+.contrast-theme .output-header {
+  background-color: #000;
   border-color: #fff;
 }
 
@@ -63,171 +56,259 @@
   font-size: 1rem;
   margin: 0;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-/* Output Actions */
-.output-actions {
+/* Split Container */
+.output-split-container {
   display: flex;
-  gap: 0.6rem;
-  flex-shrink: 0;
-  align-items: center;
+  flex-direction: column;
+  height: calc(100% - 50px);
+  overflow: hidden;
 }
 
-.output-actions button {
-  padding: 0.3rem 0.8rem; /* Matches CodeEditor padding */
-  font-size: 0.85rem; /* Matches CodeEditor font size */
-  border: none;
-  border-radius: 4px; /* Matches CodeEditor border radius */
-  cursor: pointer;
-  transition: all 0.2s ease;
+.output-section {
+  flex: 1;
+  min-height: 0;
   display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid;
+}
+
+.light-theme .output-section {
+  border-color: #e0e0e0;
+}
+
+.dark-theme .output-section {
+  border-color: #333;
+}
+
+.contrast-theme .output-section {
+  border-color: #fff;
+}
+
+.output-section:last-child {
+  border-bottom: none;
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100px; /* Matches CodeEditor default width */
-  min-height: 32px; /* Matches CodeEditor min-height */
+  padding: 0.5rem 1rem;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Button Text and Icon */
-.button-text {
-  display: inline-block;
-  white-space: nowrap; /* Prevent text wrapping */
+.dark-theme .section-header {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Button Themes */
-.action-button.light-theme {
-  color: #ffffff;
+.contrast-theme .section-header {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-.action-button.dark-theme {
-  color: #ffffff;
+.section-header h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-.action-button.contrast-theme {
-  color: #ffffff;
-  border: 1px solid #fff;
+.test-summary {
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
-/* Copy Button */
-.copy-button {
-  background-color: #007acc;
-}
-
-.copy-button:hover {
-  background-color: #0062a3;
-}
-
-/* Clear Output Button */
-.clear-output-button {
-  background-color: #ef4444;
-}
-
-.clear-output-button:hover {
-  background-color: #dc2626;
-}
-
-/* Output Content Area */
+/* Content Areas */
 .output-content {
-  margin-top: 1rem;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  font-family: monospace;
-  flex-grow: 1;
-  overflow: auto;
   padding: 1rem;
-  border-radius: 0 0 8px 8px;
-  transition: opacity 0.3s ease;
-  min-height: 100px;
+  margin: 0;
+  overflow: auto;
+  flex-grow: 1;
+  font-family: monospace;
+  white-space: pre-wrap;
   line-height: 1.5;
 }
 
-.output-content.light-theme {
-  background: #ffffff;
-  color: #1e1e1e;
+.test-results-container {
+  padding: 0.5rem;
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
-.output-content.dark-theme {
-  background: #1e1e1e;
-  color: #ffffff;
+.no-tests-message {
+  padding: 1rem;
+  text-align: center;
+  color: #666;
 }
 
-.output-content.contrast-theme {
-  background: #000000;
-  color: #ffffff;
-  border: 1px solid #fff;
+.dark-theme .no-tests-message {
+  color: #aaa;
+}
+
+/* Test Case Styles */
+.test-case {
+  margin-bottom: 0.75rem;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.test-case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+}
+
+.test-case.passed .test-case-header {
+  background-color: rgba(74, 222, 128, 0.2);
+  color: #16a34a;
+}
+
+.test-case.failed .test-case-header {
+  background-color: rgba(248, 113, 113, 0.2);
+  color: #dc2626;
+}
+
+.test-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.execution-time {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.test-case-content {
+  padding: 0.75rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.light-theme .test-case-content {
+  background-color: #f9f9f9;
+}
+
+.dark-theme .test-case-content {
+  background-color: #252526;
+}
+
+.contrast-theme .test-case-content {
+  background-color: #111;
+}
+
+.test-io {
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.test-io:last-child {
+  margin-bottom: 0;
+}
+
+.io-label {
+  font-weight: 500;
+  min-width: 70px;
+}
+
+/* Action Buttons */
+.output-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-button {
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.copy-button {
+  background-color: #007acc;
+  color: white;
+}
+
+.clear-output-button {
+  background-color: #ef4444;
+  color: white;
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-  .output-container {
+  .output-header {
     padding: 0.5rem;
   }
-
-  .output-header {
-    padding: 0.4rem 0.8rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+  
+  .section-header {
+    padding: 0.4rem 0.75rem;
   }
-
-  .output-header h3 {
-    margin-bottom: 0.5rem;
-    max-width: 100%;
+  
+  .output-content, .test-results-container {
+    padding: 0.75rem;
   }
-
-  .output-actions {
-    gap: 0.5rem; /* Reduce gap on mobile */
-  }
-
-  .output-actions button {
-    width: 90px; /* Matches CodeEditor mobile width */
-    font-size: 0.8rem; /* Matches CodeEditor mobile font size */
-    padding: 0.3rem 0.5rem; /* Matches CodeEditor mobile padding */
-  }
-
-  .button-text {
-    font-size: 0.8rem; /* Matches CodeEditor mobile text size */
+  
+  .action-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
   }
 }
 
 @media (max-width: 480px) {
-  .output-header h3 {
-    font-size: 0.9rem;
+  .output-split-container {
+    flex-direction: column;
   }
-
-  .output-actions button {
-    width: 80px; /* Matches CodeEditor smaller screen width */
-    font-size: 0.75rem; /* Matches CodeEditor smaller screen font size */
-    padding: 0.2rem 0.4rem; /* Matches CodeEditor smaller screen padding */
+  
+  .output-section {
+    min-height: 150px;
   }
-
-  .button-text {
-    font-size: 0.75rem; /* Matches CodeEditor smaller screen text size */
+  
+  .test-io {
+    flex-direction: column;
+    gap: 0.2rem;
   }
-  .output-header{
-        margin-top: -19px;
-    margin-left: -10px;
-    min-width: 200px;
+  
+  .io-label {
+    min-width: auto;
   }
 }
-
-@media (max-width: 360px) {
-  .output-actions button {
-    width: 70px; /* Matches CodeEditor very small screen width */
-    font-size: 0.7rem; /* Matches CodeEditor very small screen font size */
-    padding: 0.2rem 0.3rem; /* Matches CodeEditor very small screen padding */
-  }
-
-  .button-text {
-    font-size: 0.7rem; /* Matches CodeEditor very small screen text size */
-  }
+/* Loading states for test cases */
+.test-case-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  color: #666;
 }
 
-/* Accessibility improvements */
-.action-button:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
+.test-case-loading .loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-top-color: #007acc;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.dark-theme .test-case-loading {
+  color: #aaa;
+}
+
+.dark-theme .test-case-loading .loading-spinner {
+  border-color: rgba(255,255,255,0.1);
+  border-top-color: #007acc;
+}
+
+/* Existing spin animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
