@@ -1,35 +1,3 @@
-// const runCode = require('../../utils/runCode');
-
-// const isHelloWorldQuestion = (question) => {
-//   const keywords = ['hello world', 'hello, world', 'print hello'];
-//   return keywords.some((kw) => question.toLowerCase().includes(kw));
-// };
-
-// const helloWorldTestCases = [
-//   { input: null, expected: 'Hello, World!' },
-// ];
-
-// const handleHelloWorldCheck = async ({ code, language, question }) => {
-//   if (!isHelloWorldQuestion(question)) return null;
-
-//   const results = [];
-
-//   for (const test of helloWorldTestCases) {
-//     // No input injection needed since "Hello, World!" takes no input
-//     const output = await runCode(code, language);
-
-//     results.push({
-//       input: test.input,
-//       expected: test.expected,
-//       output: output.trim(),
-//       passed: output.trim() === test.expected,
-//     });
-//   }
-
-//   return results;
-// };
-
-// module.exports = handleHelloWorldCheck;
 
 
 const runCode = require('../../utils/runCode');
